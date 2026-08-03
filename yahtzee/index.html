@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Yahtzee</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+
+<div id="setup">
+  <div class="sbox">
+    <h1 class="s-title">Yahtzee</h1>
+    <div class="s-sect">
+      <div class="s-lbl">Players</div>
+      <div class="cnt-row">
+        <button class="cnt" data-n="2">2</button>
+        <button class="cnt on" data-n="3">3</button>
+        <button class="cnt" data-n="4">4</button>
+      </div>
+    </div>
+    <div class="s-sect">
+      <div class="s-lbl">Names</div>
+      <div class="name-list" id="name-list"></div>
+    </div>
+    <button class="btn-start" id="start-btn">Start Game</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <span class="hdr-logo">Yahtzee</span>
+    <div class="hdr-right">
+      <span class="hdr-player" id="h-player"></span>
+      <span class="hdr-round" id="h-round"></span>
+    </div>
+  </div>
+
+  <div class="dice-sec">
+    <div id="dice-container"></div>
+    <div class="ctrl">
+      <span class="rolls-txt" id="rolls-txt"></span>
+      <button class="btn-roll" id="roll-btn">Roll</button>
+    </div>
+  </div>
+
+  <div class="sc-wrap">
+    <table class="sc" id="sc"></table>
+  </div>
+  
+  <div id="canvas-layer"></div>
+  <div id="held-overlay">
+    <div class="htag" id="htag-0">HELD</div>
+    <div class="htag" id="htag-1">HELD</div>
+    <div class="htag" id="htag-2">HELD</div>
+    <div class="htag" id="htag-3">HELD</div>
+    <div class="htag" id="htag-4">HELD</div>
+  </div>
+</div>
+
+<div id="notif">
+  <div class="ndot" id="n-dot"></div>
+  <span id="n-txt"></span>
+</div>
+
+<div id="over">
+  <h2 class="over-title">Game Over</h2>
+  <div class="over-card" id="over-card"></div>
+  <button class="btn-again" onclick="location.reload()">Play Again</button>
+</div>
+
+</body>
+</html>
