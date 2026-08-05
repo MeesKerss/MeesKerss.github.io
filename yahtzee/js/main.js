@@ -795,70 +795,9 @@ document.getElementById('start-btn').addEventListener('click',()=>{
   document.getElementById('setup').style.display='none';
   const app=document.getElementById('app'); app.style.display='flex'; app.style.flexDirection='column';
   init3D(); updateHeader(); updateRollBtn(); initScorecard(); flashNotif();
-  initShakeToRoll();
 });
 document.getElementById('roll-btn').addEventListener('click',doRoll);
 
-// ─── Shake to Roll ───────────────────────────────────────────────────────────
-function initShakeToRoll() {
-  const SHAKE_THRESHOLD  = 18;   // m/s² to register as shaking
-  const RELEASE_THRESHOLD = 6;   // m/s² to register as settled
-  const RELEASE_DELAY_MS  = 350; // ms of calm before triggering roll
 
-  let shaking=false, releaseTimer=null;
-
-  // Elements are real HTML nodes styled via CSS — not created/styled inline
-  const shakeEl=document.getElementById('shake-indicator');
-  const iosBtn =document.getElementById('ios-shake-btn');
-
-  function showHint() {
-    shakeEl.textContent='🎲 Shake to roll!';
-    shakeEl.classList.add('visible');
-    setTimeout(()=>shakeEl.classList.remove('visible'),2500);
-  }
-
-  function onMotion(e) {
-    const acc=e.accelerationIncludingGravity;
-    if(!acc) return;
-    const mag=Math.sqrt((acc.x||0)**2+(acc.y||0)**2+(acc.z||0)**2);
-
-    if(mag>SHAKE_THRESHOLD) {
-      if(!shaking) {
-        shaking=true;
-        shakeEl.textContent='🎲 Release to throw!';
-        shakeEl.classList.add('visible');
-      }
-      if(releaseTimer){clearTimeout(releaseTimer); releaseTimer=null;}
-    } else if(shaking&&mag<RELEASE_THRESHOLD) {
-      if(!releaseTimer) {
-        releaseTimer=setTimeout(()=>{
-          shaking=false; releaseTimer=null;
-          shakeEl.classList.remove('visible');
-          if(G&&!G.rolling&&G.rollsLeft>0) doRoll();
-        },RELEASE_DELAY_MS);
-      }
-    }
-  }
-
-  if(typeof DeviceMotionEvent!=='undefined') {
-    if(typeof DeviceMotionEvent.requestPermission==='function') {
-      // iOS 13+ requires a user-gesture permission tap
-      iosBtn.classList.add('visible');
-      iosBtn.addEventListener('click',()=>{
-        DeviceMotionEvent.requestPermission().then(result=>{
-          if(result==='granted'){
-            window.addEventListener('devicemotion',onMotion);
-            iosBtn.classList.remove('visible');
-            showHint();
-          }
-        }).catch(console.error);
-      });
-    } else {
-      // Android / other browsers — permission not required
-      window.addEventListener('devicemotion',onMotion);
-      showHint();
-    }
-  }
-}
 
 buildNames(3);

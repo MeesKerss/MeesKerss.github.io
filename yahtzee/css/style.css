@@ -108,28 +108,6 @@ td.scell{text-align:center}
 .over-score{font-size:1.1rem;font-weight:800}
 .btn-again{background:#111;color:#fff;border-radius:50px;padding:.75rem 2.25rem;font-size:.9rem;font-weight:700}
 
-/* Shake-to-roll UI — styled here instead of via inline JS styles */
-#shake-indicator{
-  position:fixed;bottom:80px;left:50%;
-  transform:translateX(-50%) translateY(20px);
-  background:rgba(255,255,255,.12);backdrop-filter:blur(10px);
-  color:rgba(255,255,255,.7);padding:8px 20px;border-radius:999px;
-  font-size:13px;letter-spacing:.03em;pointer-events:none;
-  opacity:0;transition:opacity .4s,transform .4s;
-  z-index:9999;border:1px solid rgba(255,255,255,.15)
-}
-#shake-indicator.visible{opacity:1;transform:translateX(-50%) translateY(0)}
-
-#ios-shake-btn{
-  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-  background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
-  color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:999px;
-  padding:10px 24px;font-size:14px;cursor:pointer;z-index:9999;
-  opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity .3s,visibility .3s
-}
-#ios-shake-btn.visible{opacity:1;visibility:visible;pointer-events:all}
-
 /* Zero-score misclick confirmation bar */
 #score-confirm{
   position:fixed;bottom:0;left:0;right:0;z-index:450;
