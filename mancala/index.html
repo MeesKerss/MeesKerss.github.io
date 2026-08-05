@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Mancala</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/css/reset.css"/>
+<link rel="stylesheet" href="../shared/css/components.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<script src="../shared/js/audio.js" defer></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+
+<div id="setup">
+  <div class="sbox">
+    <h1 class="s-title">Mancala</h1>
+    <div class="s-sect">
+      <div class="s-lbl">Players</div>
+      <div class="cnt-row" id="player-btns">
+        <button class="cnt on" data-n="2">2</button>
+      </div>
+    </div>
+    <div class="s-sect">
+      <div class="s-lbl">Names</div>
+      <div class="name-list" id="name-list"></div>
+    </div>
+    <button class="btn-start" id="start-btn">Start Game</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <span class="hdr-logo">Mancala</span>
+    <div class="hdr-right">
+      <div class="hdr-info">
+        <span class="hdr-player" id="h-player"></span>
+      </div>
+      <button id="btn-restart" class="hdr-btn" title="Restart Game">↺</button>
+    </div>
+  </div>
+
+  <div class="game-area" id="game-area">
+    <div class="board-container">
+      
+      <!-- Top player (Player 2) Info -->
+      <div class="player-banner top-banner" id="banner-1">
+        <div class="p-dot" id="dot-1"></div>
+        <span class="p-name" id="name-1">Player 2</span>
+      </div>
+
+      <div class="mancala-board" id="board">
+        <!-- Player 2 Store (Index 13) -->
+        <div class="store p1-store" id="pit-13" data-idx="13">
+          <div class="stone-container" id="stones-13"></div>
+          <div class="pit-label" id="lbl-13">0</div>
+        </div>
+
+        <div class="pits-grid">
+          <!-- Player 2 Row (Indices 12 down to 7) -->
+          <div class="row p1-row">
+            <div class="pit" id="pit-12" data-idx="12"><div class="stone-container" id="stones-12"></div><div class="pit-label" id="lbl-12">4</div></div>
+            <div class="pit" id="pit-11" data-idx="11"><div class="stone-container" id="stones-11"></div><div class="pit-label" id="lbl-11">4</div></div>
+            <div class="pit" id="pit-10" data-idx="10"><div class="stone-container" id="stones-10"></div><div class="pit-label" id="lbl-10">4</div></div>
+            <div class="pit" id="pit-9" data-idx="9"><div class="stone-container" id="stones-9"></div><div class="pit-label" id="lbl-9">4</div></div>
+            <div class="pit" id="pit-8" data-idx="8"><div class="stone-container" id="stones-8"></div><div class="pit-label" id="lbl-8">4</div></div>
+            <div class="pit" id="pit-7" data-idx="7"><div class="stone-container" id="stones-7"></div><div class="pit-label" id="lbl-7">4</div></div>
+          </div>
+          
+          <!-- Divider line -->
+          <div class="board-divider"></div>
+
+          <!-- Player 1 Row (Indices 0 up to 5) -->
+          <div class="row p0-row">
+            <div class="pit" id="pit-0" data-idx="0"><div class="stone-container" id="stones-0"></div><div class="pit-label" id="lbl-0">4</div></div>
+            <div class="pit" id="pit-1" data-idx="1"><div class="stone-container" id="stones-1"></div><div class="pit-label" id="lbl-1">4</div></div>
+            <div class="pit" id="pit-2" data-idx="2"><div class="stone-container" id="stones-2"></div><div class="pit-label" id="lbl-2">4</div></div>
+            <div class="pit" id="pit-3" data-idx="3"><div class="stone-container" id="stones-3"></div><div class="pit-label" id="lbl-3">4</div></div>
+            <div class="pit" id="pit-4" data-idx="4"><div class="stone-container" id="stones-4"></div><div class="pit-label" id="lbl-4">4</div></div>
+            <div class="pit" id="pit-5" data-idx="5"><div class="stone-container" id="stones-5"></div><div class="pit-label" id="lbl-5">4</div></div>
+          </div>
+        </div>
+
+        <!-- Player 1 Store (Index 6) -->
+        <div class="store p0-store" id="pit-6" data-idx="6">
+          <div class="stone-container" id="stones-6"></div>
+          <div class="pit-label" id="lbl-6">0</div>
+        </div>
+      </div>
+
+      <!-- Bottom player (Player 1) Info -->
+      <div class="player-banner bot-banner" id="banner-0">
+        <div class="p-dot" id="dot-0"></div>
+        <span class="p-name" id="name-0">Player 1</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="notif">
+  <div class="ndot" id="n-dot"></div>
+  <span id="n-txt"></span>
+</div>
+
+<div id="over">
+  <h2 class="over-title">Game Over</h2>
+  <div class="over-card" id="over-card"></div>
+  <button class="btn-again" id="btn-play-again">Play Again</button>
+</div>
+
+</body>
+</html>

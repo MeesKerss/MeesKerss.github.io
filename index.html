@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>mkers.nl</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;font-family:'Inter',system-ui,sans-serif;color:#111;background:#f0ede8;-webkit-font-smoothing:antialiased}
+  
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .hdr {
+    margin-bottom: 3rem;
+  }
+  .hdr h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+  }
+  .hdr p {
+    font-weight: 500;
+    color: #999;
+    font-size: 1.1rem;
+  }
+  
+  .games-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+  }
+  
+  .game-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 1.25rem 1.5rem;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #111;
+    box-shadow: 0 4px 32px rgba(0,0,0,.04);
+    transition: transform .13s cubic-bezier(.32,.72,0,1), box-shadow .13s;
+  }
+  .game-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0,0,0,.06);
+  }
+  .game-link:active {
+    transform: scale(0.97);
+  }
+  
+  .g-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .g-players {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #bbb;
+  }
+  
+  .footer {
+    text-align: center;
+    padding-top: 3rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="hdr">
+    <h1>mkers.nl</h1>
+  </div>
+  
+  <div class="games-list">
+    <a href="/yahtzee/" class="game-link">
+      <span class="g-title">🎲 Yahtzee</span>
+      <span class="g-players">1-4 Players</span>
+    </a>
+    <a href="/connect4/" class="game-link">
+      <span class="g-title">🔴🟡 Connect 4</span>
+      <span class="g-players">2 Players</span>
+    </a>
+    <a href="/memory/" class="game-link">
+      <span class="g-title">🃏 Memory</span>
+      <span class="g-players">2-4 Players</span>
+    </a>
+    <a href="/dotsboxes/" class="game-link">
+      <span class="g-title">✏️ Dots & Boxes</span>
+      <span class="g-players">2-4 Players</span>
+    </a>
+    <a href="/liarsdice/" class="game-link">
+      <span class="g-title">🤥 Liar's Dice</span>
+      <span class="g-players">2-4 Players</span>
+    </a>
+    <a href="/mancala/" class="game-link">
+      <span class="g-title">🪨 Mancala</span>
+      <span class="g-players">2 Players</span>
+    </a>
+  </div>
+</div>
+
+</body>
+</html>

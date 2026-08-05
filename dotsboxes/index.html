@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Dots & Boxes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/css/reset.css"/>
+<link rel="stylesheet" href="../shared/css/components.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<script src="../shared/js/audio.js" defer></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+
+<div id="setup">
+  <div class="sbox">
+    <h1 class="s-title">Dots & Boxes</h1>
+    <div class="s-sect">
+      <div class="s-lbl">Grid Size</div>
+      <div class="cnt-row" id="grid-btns">
+        <button class="cnt" data-s="4">4x4</button>
+        <button class="cnt on" data-s="5">5x5</button>
+        <button class="cnt" data-s="6">6x6</button>
+      </div>
+    </div>
+    <div class="s-sect">
+      <div class="s-lbl">Players</div>
+      <div class="cnt-row" id="player-btns">
+        <button class="cnt on" data-n="2">2</button>
+        <button class="cnt" data-n="3">3</button>
+        <button class="cnt" data-n="4">4</button>
+      </div>
+    </div>
+    <div class="s-sect">
+      <div class="s-lbl">Names</div>
+      <div class="name-list" id="name-list"></div>
+    </div>
+    <button class="btn-start" id="start-btn">Start Game</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <span class="hdr-logo">Dots & Boxes</span>
+    <div class="hdr-right">
+      <div class="hdr-info">
+        <span class="hdr-player" id="h-player"></span>
+        <span class="hdr-round" id="h-round"></span>
+      </div>
+      <button id="btn-restart" class="hdr-btn" title="Restart Game">↺</button>
+    </div>
+  </div>
+  
+  <div class="score-strip" id="score-strip"></div>
+
+  <div class="game-area">
+    <div id="board-wrap">
+      <div id="board">
+        <!-- Grid is drawn here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="notif">
+  <div class="ndot" id="n-dot"></div>
+  <span id="n-txt"></span>
+</div>
+
+<div id="over">
+  <h2 class="over-title">Game Over</h2>
+  <div class="over-card" id="over-card"></div>
+  <button class="btn-again" onclick="localStorage.removeItem('dots_state'); location.reload()">Play Again</button>
+</div>
+
+</body>
+</html>

@@ -51,6 +51,10 @@ const upperBonus = sh=>upperTotal(sh)>=63?35:0;
 const grandTotal = sh=>ALL.reduce((a,k)=>a+(sh[k]??0),0)+upperBonus(sh);
 
 let G;
+function saveState() {
+  if (G) localStorage.setItem('yahtzee_state', JSON.stringify(G));
+}
+
 function newGame(names) {
   G = {
     players: names.map((n,i)=>({name:n,color:COLORS[i]})),
@@ -59,12 +63,14 @@ function newGame(names) {
     dice:[1,2,3,4,5], locked:[false,false,false,false,false],
     rolled:false, rolling:false,
   };
+  saveState();
 }
 function nextTurn() {
   G.cur=(G.cur+1)%G.players.length;
   if(G.cur===0) G.round++;
   G.rollsLeft=3; G.dice=[1,2,3,4,5];
   G.locked=[false,false,false,false,false]; G.rolled=false;
+  saveState();
 }
 const isDone = ()=>G.sheets.every(sh=>ALL.every(k=>sh[k]!==undefined));
 
@@ -468,6 +474,7 @@ async function doRoll() {
   for(let i=0;i<5;i++) if(!G.locked[i]) G.dice[i]=Math.ceil(Math.random()*6);
   G.rollsLeft--;
   G.rolled=true;
+  if(G) localStorage.setItem('yahtzee_state', JSON.stringify({...G, rolling: false}));
 
   for(let i=0;i<5;i++) {
     if(!G.locked[i]) {
@@ -485,6 +492,7 @@ async function doRoll() {
   });
 
   G.rolling=false;
+  saveState();
   updateHeldTags(); updateRollBtn(); updateScorecard();
   hideScoreConfirm(); // rolling cancels any pending zero-score confirmation
 }
@@ -495,6 +503,7 @@ function toggleLock(i) {
   sndClick(G.locked[i]);
   diceMeshes[i].mesh.material=getMaterialsForValue(G.dice[i],diceMeshes[i].currentFaceUp,G.locked[i]?lockedMats:normalMats);
   updateHeldTags();
+  saveState();
 }
 
 function pickScore(id) {
@@ -511,6 +520,7 @@ function pickScore(id) {
   hideScoreConfirm();
 
   G.sheets[G.cur][id]=s;
+  saveState();
   if(id==='ytz'&&s===50) sndYahtzee(); else sndScore();
 
   // Capture the direct cell reference BEFORE updateScorecard so the
@@ -773,12 +783,13 @@ document.getElementById('sc-ok').addEventListener('click', ()=>{
   if(pendingScoreId) pickScore(pendingScoreId); // second call — pendingScoreId is set, so it confirms
 });
 function buildNames(n) {
+  const globalPlayers = JSON.parse(localStorage.getItem('mkers_players') || '[]');
   const el=document.getElementById('name-list'); el.innerHTML='';
   for(let i=0;i<n;i++) {
     const row=document.createElement('div'); row.className='nrow';
     const dot=document.createElement('div'); dot.className='ndot'; dot.style.background=COLORS[i];
     const inp=document.createElement('input');
-    inp.className='ninp'; inp.type='text'; inp.value=DEFAULTS[i];
+    inp.className='ninp'; inp.type='text'; inp.value=globalPlayers[i] || DEFAULTS[i];
     inp.placeholder=DEFAULTS[i]; inp.maxLength=16;
     row.appendChild(dot); row.appendChild(inp); el.appendChild(row);
   }
@@ -791,6 +802,11 @@ document.querySelectorAll('.cnt').forEach(b=>{
 });
 document.getElementById('start-btn').addEventListener('click',()=>{
   const names=[...document.querySelectorAll('.ninp')].map(i=>i.value.trim()||i.placeholder);
+  
+  const globalPlayers = JSON.parse(localStorage.getItem('mkers_players') || '[]');
+  for(let i=0; i<names.length; i++) globalPlayers[i] = names[i];
+  localStorage.setItem('mkers_players', JSON.stringify(globalPlayers));
+
   newGame(names);
   document.getElementById('setup').style.display='none';
   const app=document.getElementById('app'); app.style.display='flex'; app.style.flexDirection='column';
@@ -798,6 +814,34 @@ document.getElementById('start-btn').addEventListener('click',()=>{
 });
 document.getElementById('roll-btn').addEventListener('click',doRoll);
 
+document.getElementById('btn-restart').addEventListener('click', () => {
+  localStorage.removeItem('yahtzee_state');
+  location.reload();
+});
 
+function initApp() {
+  const saved = localStorage.getItem('yahtzee_state');
+  if(saved) {
+    try {
+      G = JSON.parse(saved);
+      document.getElementById('setup').style.display='none';
+      const app = document.getElementById('app'); 
+      app.style.display='flex'; app.style.flexDirection='column';
+      init3D(); updateHeader(); updateRollBtn(); initScorecard(); flashNotif();
+      
+      if(G.rolled && diceMeshes.length === 5) {
+        for(let i=0; i<5; i++) {
+          diceMeshes[i].mesh.material = getMaterialsForValue(G.dice[i], 0, G.locked[i] ? lockedMats : normalMats);
+        }
+        updateHeldTags();
+      }
+      if(isDone()) showOver();
+    } catch(e) {
+      buildNames(3);
+    }
+  } else {
+    buildNames(3);
+  }
+}
 
-buildNames(3);
+initApp();
