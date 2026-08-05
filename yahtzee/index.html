@@ -51,7 +51,7 @@
   <div class="sc-wrap">
     <table class="sc" id="sc"></table>
   </div>
-  
+
   <div id="canvas-layer"></div>
   <div id="held-overlay">
     <div class="htag" id="htag-0">HELD</div>
@@ -71,6 +71,22 @@
   <h2 class="over-title">Game Over</h2>
   <div class="over-card" id="over-card"></div>
   <button class="btn-again" onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- Shake-to-roll UI — real DOM nodes styled via CSS, toggled by JS class -->
+<div id="shake-indicator"></div>
+<button id="ios-shake-btn">🎲 Enable shake to roll</button>
+
+<!-- Zero-score misclick confirmation bar -->
+<div id="score-confirm">
+  <div id="sc-countdown"></div>
+  <div class="sc-body">
+    <span class="sc-msg">⚠ <strong id="sc-cat-name"></strong> scores <strong>0 pts</strong> — are you sure?</span>
+    <div class="sc-actions">
+      <button id="sc-cancel">Cancel</button>
+      <button id="sc-ok">Score 0</button>
+    </div>
+  </div>
 </div>
 
 </body>
