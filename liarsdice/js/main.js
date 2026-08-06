@@ -517,10 +517,10 @@ function initApp() {
       const activePlayers = G.players.filter(p => p.dice > 0);
       if(activePlayers.length <= 1) showOver();
     } catch(e) {
-      buildNames(3);
+      buildNames(2);
     }
   } else {
-    buildNames(3);
+    buildNames(2);
   }
 }
 
