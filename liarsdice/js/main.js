@@ -426,15 +426,15 @@ document.getElementById('btn-next-round').onclick = () => {
 // --- Peek Logic ---
 const peekEl = document.getElementById('peek-overlay');
 function startPeek(e) {
+  if(!G || G.phase !== 'bidding') return;
   if(e) e.preventDefault();
-  if(G.phase !== 'bidding') return;
   if(window.initAudio) window.initAudio();
   peekEl.classList.add('hidden');
   rebuildMeshes(G.placements, G.turn);
 }
 function stopPeek(e) {
-  if(e) e.preventDefault();
-  if(G.phase !== 'bidding') return;
+  if(!G || G.phase !== 'bidding') return;
+  if(e && e.target === peekEl) e.preventDefault();
   peekEl.classList.remove('hidden');
   // Clear scene
   diceMeshes.forEach(d => scene.remove(d));

@@ -4,117 +4,407 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>mkers.nl</title>
+<meta name="description" content="A collection of party games. No accounts, no app. Just open and play."/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;font-family:'Inter',system-ui,sans-serif;color:#111;background:#f0ede8;-webkit-font-smoothing:antialiased}
-  
-  .container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  .hdr {
-    margin-bottom: 3rem;
-  }
-  .hdr h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    margin-bottom: 0.25rem;
-  }
-  .hdr p {
-    font-weight: 500;
-    color: #999;
-    font-size: 1.1rem;
-  }
-  
-  .games-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    flex: 1;
-  }
-  
-  .game-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    padding: 1.25rem 1.5rem;
-    border-radius: 16px;
-    text-decoration: none;
-    color: #111;
-    box-shadow: 0 4px 32px rgba(0,0,0,.04);
-    transition: transform .13s cubic-bezier(.32,.72,0,1), box-shadow .13s;
-  }
-  .game-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 40px rgba(0,0,0,.06);
-  }
-  .game-link:active {
-    transform: scale(0.97);
-  }
-  
-  .g-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-  .g-players {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #bbb;
-  }
-  
-  .footer {
-    text-align: center;
-    padding-top: 3rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #bbb;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f0ede8;
+}
+
+/* ── Room ────────────────────────────────────────────── */
+
+.room {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  /* Warm ambient light animation — the "living" part */
+  animation: roomlight 12s ease-in-out infinite alternate;
+}
+
+@keyframes roomlight {
+  0%   { background: radial-gradient(ellipse 70% 90% at 5% 45%, rgba(255,235,160,0.25) 0%, transparent 65%), #f0ede8; }
+  100% { background: radial-gradient(ellipse 60% 80% at 8% 40%, rgba(255,225,130,0.14) 0%, transparent 65%), #f0ede8; }
+}
+
+/* ── Site label ──────────────────────────────────────── */
+
+.site-label {
+  position: absolute;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #b0aa9f;
+  white-space: nowrap;
+  z-index: 50;
+  text-transform: lowercase;
+}
+
+/* ── Abstract Window ─────────────────────────────────── */
+
+.window {
+  position: absolute;
+  right: 50%;
+  margin-right: 256px;
+  top: 80px;
+  width: 110px;
+  height: 190px;
+  z-index: 5;
+}
+
+.window-outer {
+  position: absolute;
+  inset: 0;
+  background: #c8c0b4;
+  border-radius: 2px;
+  box-shadow: 3px 4px 0 #b5aea5, 0 12px 32px rgba(0,0,0,0.10);
+}
+
+.window-inner {
+  position: absolute;
+  inset: 9px;
+  display: grid;
+  grid-template-columns: 1fr 8px 1fr;
+  grid-template-rows: 1fr 8px 1fr;
+  background: #c8c0b4;
+  gap: 0;
+}
+
+.window-inner span {
+  display: block;
+  background: linear-gradient(175deg, #c8e8f6 0%, #dff1fc 45%, #eef6f0 100%);
+}
+.window-inner span:nth-child(2),
+.window-inner span:nth-child(4),
+.window-inner span:nth-child(5),
+.window-inner span:nth-child(6),
+.window-inner span:nth-child(8) {
+  background: #c8c0b4;
+}
+
+/* Light cast from window onto wall */
+.window-light {
+  position: absolute;
+  top: 0;
+  left: -20px;
+  width: 280px;
+  height: 100%;
+  background: linear-gradient(100deg, rgba(255,248,210,0.18) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Abstract Painting ───────────────────────────────── */
+
+.painting {
+  position: absolute;
+  left: 50%;
+  margin-left: 256px;
+  top: 105px;
+  z-index: 5;
+}
+
+.painting-outer {
+  width: 96px;
+  height: 130px;
+  background: #1e1b18;
+  border-radius: 2px;
+  box-shadow: 3px 4px 0 #141210, 0 12px 28px rgba(0,0,0,0.15);
+  padding: 8px;
+}
+
+.painting-mat {
+  width: 100%;
+  height: 100%;
+  background: #f5f0e8;
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* The art — three overlapping shapes using the player palette */
+.painting-mat::before {
+  content: '';
+  position: absolute;
+  width: 55px; height: 55px;
+  border-radius: 50%;
+  background: #d97706;
+  bottom: -12px; left: -10px;
+}
+.painting-mat::after {
+  content: '';
+  position: absolute;
+  width: 44px; height: 36px;
+  background: #2563eb;
+  top: 8px; right: -6px;
+  transform: rotate(-10deg);
+  opacity: 0.9;
+}
+.painting-shape {
+  position: absolute;
+  width: 34px; height: 34px;
+  background: #16a34a;
+  top: 22px; left: 8px;
+  transform: rotate(18deg);
+  opacity: 0.75;
+  border-radius: 3px;
+}
+
+/* ── Bookcase shell ──────────────────────────────────── */
+
+/*
+  Strategy: don't use CSS border-* for the wood panels.
+  Use a wrapper with border-radius so corners are smooth,
+  and build the sides as absolute pseudo-elements.
+*/
+
+.bookcase-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+/* Wood panel — left side */
+.bookcase-wrap::before,
+.bookcase-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 20px;
+  background: linear-gradient(180deg, #cdc6bc 0%, #bfb8ae 100%);
+  z-index: 2;
+}
+.bookcase-wrap::before {
+  left: 0;
+  border-radius: 12px 0 0 0;
+  box-shadow: inset -6px 0 10px rgba(0,0,0,0.07), -5px 0 0 #b5ada4;
+}
+.bookcase-wrap::after {
+  right: 0;
+  border-radius: 0 12px 0 0;
+  box-shadow: inset 6px 0 10px rgba(0,0,0,0.05), 5px 0 0 #b5ada4;
+}
+
+/* Wood top bar */
+.bookcase-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 20px;
+  background: linear-gradient(180deg, #d0c9bf 0%, #c5bdb2 100%);
+  border-radius: 12px 12px 0 0;
+  z-index: 3;
+  box-shadow: 0 -5px 0 #b5ada4, inset 0 -4px 8px rgba(0,0,0,0.06);
+}
+
+/* Inner back panel */
+.bookcase-inner {
+  position: absolute;
+  top: 20px; bottom: 0;
+  left: 20px; right: 20px;
+  background: #f0ede8;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 1.5rem 1rem 2.5rem;
+  gap: 0;
+  /* Faint inner ambient shadow */
+  box-shadow: inset 20px 0 30px rgba(0,0,0,0.025), inset -20px 0 30px rgba(0,0,0,0.015);
+}
+
+/* ── Shelf board ─────────────────────────────────────── */
+
+.shelf {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1rem;
+  position: relative;
+  padding-bottom: 18px;
+}
+
+/* The shelf plank */
+.shelf::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -1rem;
+  right: -1rem;
+  height: 18px;
+  background: linear-gradient(180deg, #c8c0b5 0%, #b8b0a6 100%);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.13), inset 0 2px 0 rgba(255,255,255,0.12);
+  z-index: 1;
+}
+
+/* ── Game Boxes ──────────────────────────────────────── */
+
+.game-box {
+  flex: 1;
+  max-width: 160px;
+  min-width: 0;
+  position: relative;
+  border-radius: 3px;
+  text-decoration: none;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem 0.75rem;
+  transition: transform 0.12s cubic-bezier(0, 0, 0, 1);
+  transform-origin: bottom center;
+  z-index: 2;
+
+  /* box face */
+  background: linear-gradient(160deg, var(--tint) 0%, #fff 55%);
+  /* lid edges */
+  border-top: 4px solid var(--accent);
+  box-shadow:
+    1px 0 0 #ddd,
+    0 1px 3px rgba(0,0,0,0.07),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* Slight right-edge depth on the box */
+.game-box::after {
+  content: '';
+  position: absolute;
+  top: 0; right: -4px; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 40%, #ccc) 0%, #dbd7d1 100%);
+  border-radius: 0 2px 2px 0;
+}
+
+.game-box:active {
+  transform: scale(0.95) translateY(4px);
+}
+
+/* Individual box personalities */
+.box-1 { --accent: #d97706; --tint: #fff8ed; height: 148px; }
+.box-2 { --accent: #2563eb; --tint: #f0f5ff; height: 136px; }
+.box-3 { --accent: #16a34a; --tint: #f0fdf4; height: 144px; }
+.box-4 { --accent: #7c3aed; --tint: #faf5ff; height: 132px; }
+.box-5 { --accent: #dc2626; --tint: #fff1f2; height: 150px; }
+.box-6 { --accent: #0891b2; --tint: #f0fdff; height: 138px; }
+
+.g-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 0.35rem;
+}
+
+.g-players {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #bbb;
+}
+
+/* ── Mobile ──────────────────────────────────────────── */
+
+@media (max-width: 700px) {
+  .window, .painting { display: none; }
+  .bookcase-wrap, .bookcase-inner { max-width: 100%; }
+  .bookcase-wrap::before, .bookcase-wrap::after, .bookcase-top { display: none; }
+  .bookcase-inner { left: 0; right: 0; top: 0; }
+}
+
+/* ── Accessibility ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .room { animation: none; }
+  .game-box { transition: none; }
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="hdr">
-    <h1>mkers.nl</h1>
+<div class="room">
+
+  <span class="site-label">mkers.nl</span>
+
+  <!-- Abstract window — left wall -->
+  <div class="window">
+    <div class="window-outer"></div>
+    <div class="window-inner">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+    <div class="window-light"></div>
   </div>
-  
-  <div class="games-list">
-    <a href="/yahtzee/" class="game-link">
-      <span class="g-title">🎲 Yahtzee</span>
-      <span class="g-players">1-4 Players</span>
-    </a>
-    <a href="/connect4/" class="game-link">
-      <span class="g-title">🔴🟡 Connect 4</span>
-      <span class="g-players">2 Players</span>
-    </a>
-    <a href="/memory/" class="game-link">
-      <span class="g-title">🃏 Memory</span>
-      <span class="g-players">2-4 Players</span>
-    </a>
-    <a href="/dotsboxes/" class="game-link">
-      <span class="g-title">✏️ Dots & Boxes</span>
-      <span class="g-players">2-4 Players</span>
-    </a>
-    <a href="/liarsdice/" class="game-link">
-      <span class="g-title">🤥 Liar's Dice</span>
-      <span class="g-players">2-4 Players</span>
-    </a>
-    <a href="/mancala/" class="game-link">
-      <span class="g-title">🪨 Mancala</span>
-      <span class="g-players">2 Players</span>
-    </a>
+
+  <!-- Bookcase -->
+  <div class="bookcase-wrap">
+    <div class="bookcase-top"></div>
+
+    <div class="bookcase-inner">
+
+      <!-- Shelf 1 -->
+      <div class="shelf">
+        <a href="/yahtzee/" class="game-box box-1">
+          <span class="g-title">Yahtzee</span>
+          <span class="g-players">1–4 Players</span>
+        </a>
+        <a href="/connect4/" class="game-box box-2">
+          <span class="g-title">Connect 4</span>
+          <span class="g-players">2 Players</span>
+        </a>
+      </div>
+
+      <!-- Shelf 2 -->
+      <div class="shelf">
+        <a href="/memory/" class="game-box box-3">
+          <span class="g-title">Memory</span>
+          <span class="g-players">2–4 Players</span>
+        </a>
+        <a href="/dotsboxes/" class="game-box box-4">
+          <span class="g-title">Dots &amp; Boxes</span>
+          <span class="g-players">2–4 Players</span>
+        </a>
+      </div>
+
+      <!-- Shelf 3 -->
+      <div class="shelf">
+        <a href="/liarsdice/" class="game-box box-5">
+          <span class="g-title">Liar's Dice</span>
+          <span class="g-players">2–4 Players</span>
+        </a>
+        <a href="/mancala/" class="game-box box-6">
+          <span class="g-title">Mancala</span>
+          <span class="g-players">2 Players</span>
+        </a>
+      </div>
+
+    </div>
   </div>
+
+  <!-- Abstract painting — right wall -->
+  <div class="painting">
+    <div class="painting-outer">
+      <div class="painting-mat">
+        <div class="painting-shape"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 </body>
