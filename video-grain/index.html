@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Film Grain — WebGL Video Processor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Film Grain</h1>
+    <p class="subtitle">Real-time procedural grain via WebGL</p>
+  </header>
+
+  <main>
+    <!-- ═══════════════════════════════════════════════════
+         Upload area — shown before a video is loaded
+         ═══════════════════════════════════════════════════ -->
+    <section id="upload-area" class="upload-area">
+      <label for="file-input" class="upload-label">
+        <span class="upload-icon">🎞️</span>
+        <span class="upload-text">Drop a video or click to browse</span>
+        <input
+          type="file"
+          id="file-input"
+          accept="video/*"
+        />
+      </label>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         Hidden <video> element — never displayed; serves
+         purely as the frame source for texImage2D.
+         ═══════════════════════════════════════════════════ -->
+    <video id="source-video" style="display:none" loop muted playsinline></video>
+
+    <!-- ═══════════════════════════════════════════════════
+         WebGL canvas — dynamically sized to match the
+         uploaded video's native resolution.
+         ═══════════════════════════════════════════════════ -->
+    <canvas id="grain-canvas"></canvas>
+
+    <!-- ═══════════════════════════════════════════════════
+         Control panel — each slider maps 1:1 to a GLSL
+         uniform, updated every frame without recompilation.
+         ═══════════════════════════════════════════════════ -->
+    <section id="controls" class="controls hidden">
+      <div class="control-group">
+        <label for="intensity-slider">Intensity</label>
+        <!-- u_intensity: grain opacity / blend strength (0 – 1) -->
+        <input type="range" id="intensity-slider" min="0" max="1" step="0.01" value="0.35" />
+        <output id="intensity-value">0.35</output>
+      </div>
+
+      <div class="control-group">
+        <label for="size-slider">Size</label>
+        <!-- u_size: noise coordinate scale — lower = larger grain particles -->
+        <input type="range" id="size-slider" min="0.5" max="5" step="0.1" value="1.0" />
+        <output id="size-value">1.0</output>
+      </div>
+
+      <div class="control-group">
+        <label for="speed-slider">Speed</label>
+        <!-- u_speed: temporal update rate of the noise seed -->
+        <input type="range" id="speed-slider" min="0" max="5" step="0.1" value="1.0" />
+        <output id="speed-value">1.0</output>
+      </div>
+
+      <button id="play-btn" class="play-btn">▶ Play</button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+/* ═══════════════════════════════════════════════════════
+   Reset & base
+   ═══════════════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: #0d0d0d;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Header
+   ═══════════════════════════════════════════════════════ */
+header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Main layout
+   ═══════════════════════════════════════════════════════ */
+main {
+  width: 100%;
+  max-width: 960px;
+  padding: 0 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Upload area
+   ═══════════════════════════════════════════════════════ */
+.upload-area {
+  width: 100%;
+  border: 2px dashed #333;
+  border-radius: 12px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+  border-color: #666;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  cursor: pointer;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+}
+
+.upload-text {
+  font-size: 0.95rem;
+  color: #aaa;
+}
+
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.upload-area.hidden {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Canvas
+   ═══════════════════════════════════════════════════════ */
+#grain-canvas {
+  display: none;                /* shown once video loads */
+  max-width: 100%;
+  border-radius: 8px;
+  background: #000;
+}
+
+#grain-canvas.visible {
+  display: block;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Controls
+   ═══════════════════════════════════════════════════════ */
+.controls {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.controls.hidden {
+  display: none;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+}
+
+.control-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #999;
+  min-width: 4.5rem;
+}
+
+.control-group input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 140px;
+  height: 4px;
+  border-radius: 2px;
+  background: #333;
+  outline: none;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  cursor: pointer;
+  border: none;
+}
+
+.control-group input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  cursor: pointer;
+  border: none;
+}
+
+.control-group output {
+  font-size: 0.8rem;
+  min-width: 2.5rem;
+  text-align: right;
+  color: #ccc;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Play button
+   ═══════════════════════════════════════════════════════ */
+.play-btn {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0.6rem 1.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.play-btn:hover {
+  background: #262626;
+  border-color: #555;
+}

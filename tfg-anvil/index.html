@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TFC Anvil Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        label { margin-bottom: 5px; font-weight: bold; }
+        select, input {
+            padding: 8px;
+            background: #3d3d3d;
+            border: 1px solid #555;
+            color: white;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover { background: #45a049; }
+        #output {
+            margin-top: 20px;
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Anvil Calculator</h2>
+
+    <div class="form-group">
+        <label>Starting Position:</label>
+        <input type="number" id="start" value="0">
+    </div>
+
+    <div class="form-group">
+        <label>Target Number:</label>
+        <input type="number" id="target" value="0">
+    </div>
+
+    <div class="form-group">
+        <label>3rd to Last Action:</label>
+        <select id="rule1" class="rule-select"></select>
+    </div>
+
+    <div class="form-group">
+        <label>2nd to Last Action:</label>
+        <select id="rule2" class="rule-select"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Absolute Last Action:</label>
+        <select id="rule3" class="rule-select"></select>
+    </div>
+
+    <button onclick="calculateSequence()">Calculate Sequence</button>
+
+    <div id="output">Results will appear here...</div>
+</div>
+
+<script>
+    const dropdownOptions = [
+        "None", "Any Hit", "Shrink", "Upset", "Bend",
+        "Punch", "Light Hit", "Medium Hit", "Heavy Hit", "Draw"
+    ];
+
+    const operations = {
+        "Shrink": 16,
+        "Upset": 13,
+        "Bend": 7,
+        "Punch": 2,
+        "Light Hit": -3,
+        "Medium Hit": -6,
+        "Heavy Hit": -9,
+        "Draw": -15
+    };
+
+    // Populate dropdowns
+    document.querySelectorAll('.rule-select').forEach(select => {
+        dropdownOptions.forEach(op => {
+            let option = document.createElement('option');
+            option.value = op;
+            if (op === "None" || op === "Any Hit") {
+                option.text = op;
+            } else {
+                option.text = `${op} (${operations[op] > 0 ? '+' : ''}${operations[op]})`;
+            }
+            select.appendChild(option);
+        });
+    });
+
+    function  calculateSequence() {
+        const startPos = parseInt(document.getElementById('start').value) || 0;
+        const target = parseInt(document.getElementById('target').value);
+
+        const rawRules = [
+            document.getElementById('rule1').value,
+            document.getElementById('rule2').value,
+            document.getElementById('rule3').value
+        ].filter(r => r !== "None");
+
+        // Generate all possible combinations if "Any Hit" is selected
+        let permutations = [[]];
+        for (let rule of rawRules) {
+            let nextPerms = [];
+            for (let perm of permutations) {
+                if (rule === "Any Hit") {
+                    nextPerms.push([...perm, "Light Hit"]);
+                    nextPerms.push([...perm, "Medium Hit"]);
+                    nextPerms.push([...perm, "Heavy Hit"]);
+                } else {
+                    nextPerms.push([...perm, rule]);
+                }
+            }
+            permutations = nextPerms;
+        }
+
+        let globalBestPath = null;
+        let globalBestRules = null;
+        let globalBestSetupTarget = null;
+
+        // Test every permutation to find the absolute shortest path
+        for (let currentRules of permutations) {
+            let finalNet = 0;
+            currentRules.forEach(rule => finalNet += operations[rule]);
+
+            let setupTarget = target - finalNet;
+
+            let queue = [{ val: startPos, path: [] }];
+            let visited = new Set();
+            let bestPath = null;
+
+            while (queue.length > 0) {
+                let current = queue.shift();
+
+                if (current.val === setupTarget) {
+                    bestPath = current.path;
+                    break;
+                }
+
+                if (visited.has(current.val) || current.val > 250 || current.val < -50) continue;
+                visited.add(current.val);
+
+                for (let op in operations) {
+                    queue.push({
+                        val: current.val + operations[op],
+                        path: [...current.path, op]
+                    });
+                }
+            }
+
+            // Update the global best if this path is shorter
+            if (bestPath) {
+                if (!globalBestPath || bestPath.length < globalBestPath.length) {
+                    globalBestPath = bestPath;
+                    globalBestRules = currentRules;
+                    globalBestSetupTarget = setupTarget;
+                }
+            }
+        }
+
+        const outputDiv = document.getElementById('output');
+
+        if (!globalBestPath) {
+            outputDiv.innerText = "Error: Sequence impossible within normal bounds.";
+            return;
+        }
+
+        let outputText = `Optimized Setup Target: ${globalBestSetupTarget}\n\n`;
+        let runningTotal = startPos;
+        let stepCount = 1;
+
+        if (globalBestPath.length === 0) {
+            outputText += `(Already at Setup Target)\n`;
+        } else {
+            globalBestPath.forEach(step => {
+                runningTotal += operations[step];
+                let sign = operations[step] > 0 ? '+' : '';
+                outputText += `${stepCount}. ${step} (${sign}${operations[step]}) -> ${runningTotal}\n`;
+                stepCount++;
+            });
+        }
+
+        outputText += `\n--- FINAL RULES ---\n`;
+
+        globalBestRules.forEach(step => {
+            runningTotal += operations[step];
+            let sign = operations[step] > 0 ? '+' : '';
+            outputText += `${stepCount}. ${step} (${sign}${operations[step]}) -> ${runningTotal}\n`;
+            stepCount++;
+        });
+
+        outputDiv.innerText = outputText;
+    }
+</script>
+
+</body>
+</html>

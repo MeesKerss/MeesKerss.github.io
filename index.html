@@ -15,379 +15,345 @@ html, body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   background: #f0ede8;
+  color: #111;
 }
 
-/* ── Room ────────────────────────────────────────────── */
+/* ─── Full-width scene wrapper ──────────────────── */
 
-.room {
+.scene {
+  width: 100%;
   height: 100vh;
+  position: relative;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  position: relative;
-  overflow: hidden;
-  /* Warm ambient light animation — the "living" part */
-  animation: roomlight 12s ease-in-out infinite alternate;
 }
 
-@keyframes roomlight {
-  0%   { background: radial-gradient(ellipse 70% 90% at 5% 45%, rgba(255,235,160,0.25) 0%, transparent 65%), #f0ede8; }
-  100% { background: radial-gradient(ellipse 60% 80% at 8% 40%, rgba(255,225,130,0.14) 0%, transparent 65%), #f0ede8; }
-}
-
-/* ── Site label ──────────────────────────────────────── */
-
-.site-label {
-  position: absolute;
-  top: 1.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: #b0aa9f;
-  white-space: nowrap;
-  z-index: 50;
-  text-transform: lowercase;
-}
-
-/* ── Abstract Window ─────────────────────────────────── */
+/* ─── Abstract window — left wall ──────────────── */
 
 .window {
+  display: none;
   position: absolute;
-  right: 50%;
-  margin-right: 256px;
-  top: 80px;
-  width: 110px;
-  height: 190px;
-  z-index: 5;
+  left: calc(50% - 340px);   /* sits left of the page card */
+  top: 72px;
+  width: 100px;
+  height: 160px;
+  transform: translateX(-100%);
+  margin-left: 28px;
 }
 
-.window-outer {
+@media (min-width: 820px) {
+  .window { display: block; }
+}
+
+/* Outer frame — stark, dark, minimal */
+.window-frame {
   position: absolute;
   inset: 0;
-  background: #c8c0b4;
-  border-radius: 2px;
-  box-shadow: 3px 4px 0 #b5aea5, 0 12px 32px rgba(0,0,0,0.10);
+  background: #111;
+  border-radius: 1px;
+  box-shadow: 4px 4px 0 #000, 0 12px 32px rgba(0,0,0,0.12);
 }
 
-.window-inner {
+/* 2×2 pane grid */
+.window-panes {
   position: absolute;
-  inset: 9px;
+  inset: 8px;
   display: grid;
   grid-template-columns: 1fr 8px 1fr;
   grid-template-rows: 1fr 8px 1fr;
-  background: #c8c0b4;
-  gap: 0;
+  background: #111;
 }
 
-.window-inner span {
-  display: block;
-  background: linear-gradient(175deg, #c8e8f6 0%, #dff1fc 45%, #eef6f0 100%);
-}
-.window-inner span:nth-child(2),
-.window-inner span:nth-child(4),
-.window-inner span:nth-child(5),
-.window-inner span:nth-child(6),
-.window-inner span:nth-child(8) {
-  background: #c8c0b4;
+.window-panes .pane {
+  /* Panes: white — like frosted or diffuse light */
+  background: #f8f8f6;
+  /* Subtle top-lit gradient, keeps it from being flat */
+  background: linear-gradient(175deg, #fff 0%, #f0efec 100%);
 }
 
-/* Light cast from window onto wall */
-.window-light {
-  position: absolute;
-  top: 0;
-  left: -20px;
-  width: 280px;
-  height: 100%;
-  background: linear-gradient(100deg, rgba(255,248,210,0.18) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
-}
+.window-panes .cross { background: #111; }
 
-/* ── Abstract Painting ───────────────────────────────── */
+/* ─── Abstract painting — right wall ────────────── */
 
 .painting {
+  display: none;
   position: absolute;
-  left: 50%;
-  margin-left: 256px;
-  top: 105px;
-  z-index: 5;
+  right: calc(50% - 340px);
+  top: 100px;
+  transform: translateX(100%);
+  margin-right: 28px;
 }
 
-.painting-outer {
-  width: 96px;
-  height: 130px;
-  background: #1e1b18;
-  border-radius: 2px;
-  box-shadow: 3px 4px 0 #141210, 0 12px 28px rgba(0,0,0,0.15);
-  padding: 8px;
+@media (min-width: 820px) {
+  .painting { display: block; }
 }
 
+/* Dark, minimal frame */
+.painting-frame {
+  width: 90px;
+  height: 116px;
+  background: #111;
+  box-shadow: 4px 4px 0 #000, 0 12px 28px rgba(0,0,0,0.12);
+  padding: 7px;
+  border-radius: 1px;
+}
+
+/* Cream mat board — same tone as the game background */
 .painting-mat {
   width: 100%;
   height: 100%;
-  background: #f5f0e8;
-  border-radius: 1px;
+  background: #f0ede8;
   position: relative;
   overflow: hidden;
+  border-radius: 1px;
 }
 
-/* The art — three overlapping shapes using the player palette */
+/* The abstract art — player palette colors, bold geometric shapes */
 .painting-mat::before {
   content: '';
   position: absolute;
-  width: 55px; height: 55px;
+  /* Amber circle — Player 1 */
+  width: 52px; height: 52px;
   border-radius: 50%;
   background: #d97706;
-  bottom: -12px; left: -10px;
+  bottom: -14px; left: -12px;
 }
 .painting-mat::after {
   content: '';
   position: absolute;
-  width: 44px; height: 36px;
+  /* Blue rectangle — Player 2 */
+  width: 42px; height: 30px;
   background: #2563eb;
-  top: 8px; right: -6px;
-  transform: rotate(-10deg);
+  top: 8px; right: -8px;
+  transform: rotate(-8deg);
+}
+
+/* Green and red shapes sit inside a non-pseudo container */
+.painting-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.painting-shapes::before {
+  content: '';
+  position: absolute;
+  /* Green square — Player 3 */
+  width: 26px; height: 26px;
+  background: #16a34a;
+  top: 18px; left: 8px;
+  transform: rotate(22deg);
+  border-radius: 2px;
+  opacity: 0.85;
+}
+.painting-shapes::after {
+  content: '';
+  position: absolute;
+  /* Red sliver — Player 4 */
+  width: 38px; height: 10px;
+  background: #dc2626;
+  bottom: 14px; right: 4px;
+  transform: rotate(-15deg);
   opacity: 0.9;
 }
-.painting-shape {
-  position: absolute;
-  width: 34px; height: 34px;
-  background: #16a34a;
-  top: 22px; left: 8px;
-  transform: rotate(18deg);
-  opacity: 0.75;
-  border-radius: 3px;
-}
 
-/* ── Bookcase shell ──────────────────────────────────── */
+/* ─── Page shell ────────────────────────────────── */
 
-/*
-  Strategy: don't use CSS border-* for the wood panels.
-  Use a wrapper with border-radius so corners are smooth,
-  and build the sides as absolute pseudo-elements.
-*/
-
-.bookcase-wrap {
-  position: relative;
+.page {
   width: 100%;
-  max-width: 440px;
+  max-width: 500px;
   height: 100vh;
-  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
   z-index: 10;
 }
 
-/* Wood panel — left side */
-.bookcase-wrap::before,
-.bookcase-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 20px;
-  background: linear-gradient(180deg, #cdc6bc 0%, #bfb8ae 100%);
-  z-index: 2;
-}
-.bookcase-wrap::before {
-  left: 0;
-  border-radius: 12px 0 0 0;
-  box-shadow: inset -6px 0 10px rgba(0,0,0,0.07), -5px 0 0 #b5ada4;
-}
-.bookcase-wrap::after {
-  right: 0;
-  border-radius: 0 12px 0 0;
-  box-shadow: inset 6px 0 10px rgba(0,0,0,0.05), 5px 0 0 #b5ada4;
+/* ─── Header ────────────────────────────────────── */
+
+.hdr {
+  flex-shrink: 0;
+  background: #fff;
+  border-bottom: 1px solid #e8e5e0;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* Wood top bar */
-.bookcase-top {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 20px;
-  background: linear-gradient(180deg, #d0c9bf 0%, #c5bdb2 100%);
-  border-radius: 12px 12px 0 0;
-  z-index: 3;
-  box-shadow: 0 -5px 0 #b5ada4, inset 0 -4px 8px rgba(0,0,0,0.06);
+.hdr-logo {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
-/* Inner back panel */
-.bookcase-inner {
-  position: absolute;
-  top: 20px; bottom: 0;
-  left: 20px; right: 20px;
-  background: #f0ede8;
+.hdr-sub {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #bbb;
+}
+
+/* ─── Shelves ───────────────────────────────────── */
+
+.shelves {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  padding: 1.5rem 1rem 2.5rem;
-  gap: 0;
-  /* Faint inner ambient shadow */
-  box-shadow: inset 20px 0 30px rgba(0,0,0,0.025), inset -20px 0 30px rgba(0,0,0,0.015);
+  padding: 1.25rem;
+  gap: 1.25rem;
+  overflow: hidden;
 }
-
-/* ── Shelf board ─────────────────────────────────────── */
 
 .shelf {
   flex: 1;
   display: flex;
-  justify-content: center;
   align-items: flex-end;
   gap: 1rem;
   position: relative;
-  padding-bottom: 18px;
+  padding-bottom: 10px;
 }
 
-/* The shelf plank */
 .shelf::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: -1rem;
-  right: -1rem;
-  height: 18px;
-  background: linear-gradient(180deg, #c8c0b5 0%, #b8b0a6 100%);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.13), inset 0 2px 0 rgba(255,255,255,0.12);
-  z-index: 1;
+  left: -1.25rem; right: -1.25rem;
+  height: 1px;
+  background: #e8e5e0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }
 
-/* ── Game Boxes ──────────────────────────────────────── */
+.shelf:last-child::after { display: none; }
+
+/* ─── Game boxes ────────────────────────────────── */
 
 .game-box {
   flex: 1;
-  max-width: 160px;
   min-width: 0;
-  position: relative;
-  border-radius: 3px;
   text-decoration: none;
   color: #111;
+  background: #fff;
+  border-radius: 16px;
+  border: 1.5px solid #e8e5e0;
+  border-top: 3px solid var(--accent, #e8e5e0);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 1rem 0.75rem;
-  transition: transform 0.12s cubic-bezier(0, 0, 0, 1);
-  transform-origin: bottom center;
-  z-index: 2;
-
-  /* box face */
-  background: linear-gradient(160deg, var(--tint) 0%, #fff 55%);
-  /* lid edges */
-  border-top: 4px solid var(--accent);
-  box-shadow:
-    1px 0 0 #ddd,
-    0 1px 3px rgba(0,0,0,0.07),
-    inset 0 1px 0 rgba(255,255,255,0.9);
-}
-
-/* Slight right-edge depth on the box */
-.game-box::after {
-  content: '';
-  position: absolute;
-  top: 0; right: -4px; bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 40%, #ccc) 0%, #dbd7d1 100%);
-  border-radius: 0 2px 2px 0;
+  transition: transform 0.12s cubic-bezier(0.32, 0.72, 0, 1),
+              box-shadow 0.12s cubic-bezier(0.32, 0.72, 0, 1);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .game-box:active {
-  transform: scale(0.95) translateY(4px);
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-/* Individual box personalities */
-.box-1 { --accent: #d97706; --tint: #fff8ed; height: 148px; }
-.box-2 { --accent: #2563eb; --tint: #f0f5ff; height: 136px; }
-.box-3 { --accent: #16a34a; --tint: #f0fdf4; height: 144px; }
-.box-4 { --accent: #7c3aed; --tint: #faf5ff; height: 132px; }
-.box-5 { --accent: #dc2626; --tint: #fff1f2; height: 150px; }
-.box-6 { --accent: #0891b2; --tint: #f0fdff; height: 138px; }
+.box-1 { --accent: #d97706; height: 130px; }
+.box-2 { --accent: #2563eb; height: 116px; }
+.box-3 { --accent: #16a34a; height: 122px; }
+.box-4 { --accent: #7c3aed; height: 110px; }
+.box-5 { --accent: #dc2626; height: 128px; }
+.box-6 { --accent: #0891b2; height: 114px; }
+
+.box-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent, #ccc);
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+}
 
 .g-title {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.25;
-  margin-bottom: 0.35rem;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
 }
 
 .g-players {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #bbb;
 }
 
-/* ── Mobile ──────────────────────────────────────────── */
+/* ─── Reduced motion ────────────────────────────── */
 
-@media (max-width: 700px) {
-  .window, .painting { display: none; }
-  .bookcase-wrap, .bookcase-inner { max-width: 100%; }
-  .bookcase-wrap::before, .bookcase-wrap::after, .bookcase-top { display: none; }
-  .bookcase-inner { left: 0; right: 0; top: 0; }
-}
-
-/* ── Accessibility ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .room { animation: none; }
   .game-box { transition: none; }
 }
 </style>
 </head>
 <body>
 
-<div class="room">
+<div class="scene">
 
-  <span class="site-label">mkers.nl</span>
-
-  <!-- Abstract window — left wall -->
+  <!-- Abstract window — left of the page card, desktop only -->
   <div class="window">
-    <div class="window-outer"></div>
-    <div class="window-inner">
-      <span></span><span></span><span></span>
-      <span></span><span></span><span></span>
-      <span></span><span></span><span></span>
+    <div class="window-frame"></div>
+    <div class="window-panes">
+      <span class="pane"></span>
+      <span class="cross"></span>
+      <span class="pane"></span>
+      <span class="cross"></span>
+      <span class="cross"></span>
+      <span class="cross"></span>
+      <span class="pane"></span>
+      <span class="cross"></span>
+      <span class="pane"></span>
     </div>
-    <div class="window-light"></div>
   </div>
 
-  <!-- Bookcase -->
-  <div class="bookcase-wrap">
-    <div class="bookcase-top"></div>
+  <!-- Main page -->
+  <div class="page">
 
-    <div class="bookcase-inner">
+    <div class="hdr">
+      <span class="hdr-logo">mkers.nl</span>
+    </div>
 
-      <!-- Shelf 1 -->
+    <div class="shelves">
+
       <div class="shelf">
         <a href="/yahtzee/" class="game-box box-1">
+          <div class="box-dot"></div>
           <span class="g-title">Yahtzee</span>
           <span class="g-players">1–4 Players</span>
         </a>
         <a href="/connect4/" class="game-box box-2">
+          <div class="box-dot"></div>
           <span class="g-title">Connect 4</span>
           <span class="g-players">2 Players</span>
         </a>
       </div>
 
-      <!-- Shelf 2 -->
       <div class="shelf">
         <a href="/memory/" class="game-box box-3">
+          <div class="box-dot"></div>
           <span class="g-title">Memory</span>
           <span class="g-players">2–4 Players</span>
         </a>
         <a href="/dotsboxes/" class="game-box box-4">
+          <div class="box-dot"></div>
           <span class="g-title">Dots &amp; Boxes</span>
           <span class="g-players">2–4 Players</span>
         </a>
       </div>
 
-      <!-- Shelf 3 -->
       <div class="shelf">
         <a href="/liarsdice/" class="game-box box-5">
+          <div class="box-dot"></div>
           <span class="g-title">Liar's Dice</span>
           <span class="g-players">2–4 Players</span>
         </a>
         <a href="/mancala/" class="game-box box-6">
+          <div class="box-dot"></div>
           <span class="g-title">Mancala</span>
           <span class="g-players">2 Players</span>
         </a>
@@ -396,11 +362,11 @@ html, body {
     </div>
   </div>
 
-  <!-- Abstract painting — right wall -->
+  <!-- Abstract painting — right of the page card, desktop only -->
   <div class="painting">
-    <div class="painting-outer">
+    <div class="painting-frame">
       <div class="painting-mat">
-        <div class="painting-shape"></div>
+        <div class="painting-shapes"></div>
       </div>
     </div>
   </div>

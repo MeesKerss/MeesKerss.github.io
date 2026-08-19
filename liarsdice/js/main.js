@@ -125,10 +125,15 @@ function calculateDicePlacements(diceArrays) {
     return { pIdx, v, q: flattenQuaternion(endQ, faceUp), faceUp };
   });
 
-  // --- Guaranteed visible grid layout ---
-  // Instead of random physics positions (which can scatter off-screen), we place
-  // dice in a neat grid that always fits within the camera's safe zone.
-  // Orientations are still fully random from the physics sim above.
+  // --- Shuffled Grid Layout ---
+  // We use a safe mathematical grid to guarantee visibility and prevent overlaps,
+  // but we shuffle the dice so that players' dice are randomly mixed across the board
+  // instead of sitting in artificial sequential rows.
+  for (let i = rawResults.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [rawResults[i], rawResults[j]] = [rawResults[j], rawResults[i]];
+  }
+
   const total = rawResults.length;
   const cols = Math.ceil(Math.sqrt(total));
   const rows = Math.ceil(total / cols);
