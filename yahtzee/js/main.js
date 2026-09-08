@@ -332,27 +332,49 @@ function init3D() {
   }
   window.addEventListener('resize',updateCamera);
 
-  function animate() {
+  // Fixed physics step — matches the dt used in precalculateRoll()
+  const PHYSICS_DT = 1 / 60;
+  let _lastAnimTime = null;
+  let _animAccum = 0;
+
+  function animate(now) {
     requestAnimationFrame(animate);
-    if(rollingDice.length>0) {
-      let allDone=true;
-      for(let rd of rollingDice) {
-        if(rd.frame<rd.traj.length) {
-          allDone=false;
-          const t=rd.traj[rd.frame];
-          rd.mesh.position.copy(t.p);
-          rd.mesh.quaternion.copy(t.q);
-          // O(1) Map lookup instead of O(n) Array.find() on every frame
-          const intensity=rd.bounceMap.get(rd.frame);
-          if(intensity!==undefined) sndImpact(intensity);
-          rd.frame++;
-        }
-      }
-      if(allDone) rollingDice=[];
+
+    // Accumulate real elapsed time; cap at 4 physics steps to avoid a
+    // spiral-of-death on tab re-focus after a long pause.
+    if(_lastAnimTime !== null) {
+      _animAccum += Math.min((now - _lastAnimTime) / 1000, PHYSICS_DT * 4);
     }
-    renderer.render(scene,camera);
+    _lastAnimTime = now;
+
+    if(rollingDice.length > 0) {
+      // Drain the accumulator: advance one trajectory frame per physics step
+      while(_animAccum >= PHYSICS_DT) {
+        _animAccum -= PHYSICS_DT;
+        let allDone = true;
+        for(let rd of rollingDice) {
+          if(rd.frame < rd.traj.length) {
+            allDone = false;
+            const t = rd.traj[rd.frame];
+            rd.mesh.position.copy(t.p);
+            rd.mesh.quaternion.copy(t.q);
+            // O(1) Map lookup instead of O(n) Array.find() on every frame
+            const intensity = rd.bounceMap.get(rd.frame);
+            if(intensity !== undefined) sndImpact(intensity);
+            rd.frame++;
+          }
+        }
+        if(allDone) { rollingDice = []; break; }
+      }
+    } else {
+      // Nothing rolling — bleed the accumulator so a stale delta doesn't
+      // cause a burst of frames when rolling starts again.
+      _animAccum = 0;
+    }
+
+    renderer.render(scene, camera);
   }
-  animate();
+  animate(performance.now());
 
   // ResizeObserver fires exactly once when the container gets real dimensions —
   // no blind setTimeout race condition.
