@@ -1,0 +1,95 @@
+/* Battleships Styles */
+
+/* Game Area */
+.game-area{flex:1;display:flex;flex-direction:column;align-items:center;padding:0 1.25rem 1rem;overflow-y:auto;overflow-x:hidden;gap:.6rem}
+.b-lbl{align-self:stretch;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#bbb;display:flex;align-items:center;gap:.45rem}
+.b-lbl .ndot{width:8px;height:8px}
+
+/* Main board + coordinate labels */
+.bwrap{width:min(100%,calc(100vh - 350px));width:min(100%,calc(100dvh - 350px));min-width:250px;display:grid;grid-template-columns:14px 1fr;grid-template-rows:14px auto;gap:2px}
+.bwrap.placing{width:min(100%,calc(100vh - 330px));width:min(100%,calc(100dvh - 330px))}
+.b-cols{grid-column:2;display:flex;padding:0 8px}
+.b-rows{grid-row:2;display:flex;flex-direction:column;padding:8px 0}
+.b-cols span,.b-rows span{flex:1;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;color:#ccc}
+.bwrap .board{grid-column:2;grid-row:2}
+
+.board{background:#fff;border-radius:14px;padding:8px;box-shadow:0 4px 32px rgba(0,0,0,.04);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.board.small{padding:5px;border-radius:10px;width:130px}
+.grid{display:grid;position:relative;isolation:isolate;aspect-ratio:1}
+.board.shake{animation:shake .32s cubic-bezier(.32,.72,0,1)}
+
+/* Cells = water */
+.cell{position:relative;cursor:pointer}
+.cell::before{content:'';position:absolute;inset:1.5px;border-radius:4px;background:#f5f4f0;transition:background .13s}
+.small .cell{cursor:default}
+.small .cell::before{inset:1px;border-radius:2px}
+.board.target .cell:hover::before{background:#ece9e3}
+.board.target .cell.shot{cursor:default}
+.board.target .cell.shot:hover::before{background:#f5f4f0}
+.board.locked .cell{cursor:default}
+
+/* Markers */
+.mk{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none}
+.mk-miss::after{content:'';width:22%;height:22%;border-radius:50%;background:#c9c4bc}
+.mk-clear::after{content:'';width:14%;height:14%;border-radius:50%;background:#e2ded8}
+.mk-hit svg{width:66%;height:66%}
+.mk-miss.new::before{content:'';position:absolute;width:30%;height:30%;border-radius:50%;border:2px solid #c9c4bc;animation:ripple .7s ease-out forwards}
+.mk-hit.new svg{animation:pop .38s cubic-bezier(.32,.72,0,1)}
+.small .mk-miss::after{width:26%;height:26%}
+
+/* Ships */
+.ship{position:absolute;z-index:2;pointer-events:none;transition:opacity .3s}
+.ship svg{display:block;width:100%;height:100%;overflow:visible}
+.ship.ghost{opacity:.4}
+.ship.ghost.bad{opacity:.3;filter:grayscale(1)}
+.ship.sunk{animation:fadein .5s ease}
+.ship.sunk svg{opacity:.9}
+.ship.lift{opacity:.5}
+
+/* Placement controls */
+.place-ctrl{width:100%;max-width:440px;display:flex;flex-direction:column;gap:.75rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center}
+.chip{display:flex;align-items:center;gap:.45rem;background:#fff;border:1.5px solid #e8e5e0;border-radius:10px;padding:.4rem .6rem;font-size:.72rem;font-weight:700;color:#777;transition:all .13s}
+.chip svg{height:12px;display:block}
+.chip.on{border-color:#111;color:#111}
+.chip.placed{opacity:.35}
+.pc-row{display:flex;gap:.5rem}
+.btn-ghost{flex:1;background:#fff;border:1.5px solid #e8e5e0;border-radius:50px;padding:.7rem;font-size:.85rem;font-weight:700;color:#555;transition:all .13s}
+.btn-ghost:active{transform:scale(.97);background:#fafaf8}
+.btn-pill{flex:1.3;background:#111;color:#fff;border-radius:50px;padding:.7rem;font-size:.9rem;font-weight:700;letter-spacing:.02em;transition:all .13s}
+.btn-pill:active:not(:disabled){transform:scale(.97)}
+.btn-pill:disabled{opacity:.28;cursor:default}
+
+/* Own fleet during battle */
+.own-sec{width:100%;max-width:440px;display:flex;gap:1rem;align-items:flex-start}
+.own-map{display:flex;flex-direction:column;gap:.4rem;flex-shrink:0}
+.fleet-list{flex:1;display:flex;flex-direction:column;gap:.35rem;padding-top:1.3rem;min-width:0}
+.fl-row{display:flex;align-items:center;gap:.55rem;font-size:.75rem;font-weight:600;color:#555}
+.fl-row svg{height:11px;flex-shrink:0;display:block}
+.fl-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fl-hits{font-size:.68rem;font-weight:700;color:#bbb;font-variant-numeric:tabular-nums}
+.fl-row.sunk{opacity:.35}
+.fl-row.sunk .fl-name{text-decoration:line-through}
+
+/* Score strip value */
+.p-val small{font-size:.6rem;font-weight:700;color:#bbb;margin-left:.15rem}
+
+/* Hand-off screen */
+#pass{position:fixed;inset:0;background:#f0ede8;z-index:300;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}
+#pass.on{opacity:1;visibility:visible;pointer-events:all}
+.pass-box{text-align:center}
+.pass-name{font-size:2rem;font-weight:800;letter-spacing:-.02em;margin:.2rem 0 .35rem}
+.pass-sub{font-size:.85rem;color:#999;font-weight:500;margin-bottom:1.5rem}
+.pass-news{background:#f5f4f0;border-radius:10px;padding:.75rem 1rem;font-size:.82rem;font-weight:600;color:#555;margin-bottom:1.5rem;line-height:1.45}
+.pass-news:empty{display:none}
+
+@keyframes ripple{from{transform:scale(1);opacity:1}to{transform:scale(3.2);opacity:0}}
+@keyframes pop{0%{transform:scale(.2) rotate(-30deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}50%{transform:translateX(3px)}75%{transform:translateX(-2px)}}
+
+@media(max-width:400px){
+  .game-area{padding:0 .75rem .75rem}
+  .board.small{width:112px}
+  .fl-row{font-size:.7rem}
+}

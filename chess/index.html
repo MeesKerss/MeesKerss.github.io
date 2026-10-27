@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Chess</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../shared/css/reset.css"/>
+<link rel="stylesheet" href="../shared/css/components.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<script src="../shared/js/audio.js" defer></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+
+<div id="setup">
+  <div class="sbox">
+    <h1 class="s-title">Chess</h1>
+    <div class="s-sect">
+      <div class="s-lbl">Layout</div>
+      <div class="cnt-row" id="layout-btns">
+        <button class="cnt" data-l="f2f">Face to face</button>
+        <button class="cnt" data-l="side">Same side</button>
+      </div>
+    </div>
+    <div class="s-sect">
+      <div class="s-lbl">Names</div>
+      <div class="name-list" id="name-list"></div>
+    </div>
+    <p class="s-hint" id="layout-hint"></p>
+    <button class="btn-start" id="start-btn">Start Game</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <span class="hdr-logo">Chess</span>
+    <div class="hdr-right">
+      <button id="btn-undo" class="hdr-btn" title="Undo Move">↶</button>
+      <button id="btn-restart" class="hdr-btn" title="Restart Game">↺</button>
+    </div>
+  </div>
+
+  <div class="game-area">
+    <!-- Black's panel, turned to face the player across the table when face to face -->
+    <div class="panel top" id="panel-1"></div>
+    <div class="board-frame" id="board-frame">
+      <div class="board" id="board"></div>
+    </div>
+    <div class="panel" id="panel-0"></div>
+  </div>
+</div>
+
+<!-- Promotion picker, faces the promoting player -->
+<div id="promo">
+  <div class="promo-box" id="promo-box">
+    <div class="s-lbl">Promote to</div>
+    <div class="promo-row" id="promo-row"></div>
+  </div>
+</div>
+
+<div id="notif">
+  <div class="ndot" id="n-dot"></div>
+  <span id="n-txt"></span>
+</div>
+
+<div id="over">
+  <!-- Mirrored result for the player across the table -->
+  <div class="over-mirror">
+    <h2 class="over-title" id="over-title-top"></h2>
+    <p class="over-sub" id="over-sub-top"></p>
+  </div>
+  <h2 class="over-title" id="over-title">Game Over</h2>
+  <p class="over-sub" id="over-sub"></p>
+  <div class="over-card" id="over-card"></div>
+  <button class="btn-again" id="btn-play-again">Play Again</button>
+</div>
+
+</body>
+</html>

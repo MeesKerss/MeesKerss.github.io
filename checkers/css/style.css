@@ -1,0 +1,84 @@
+/* Checkers Styles */
+
+/* Player panels, one at each end of the table */
+.ppanel{flex-shrink:0;margin:.75rem 1.25rem;background:#fff;border-radius:14px;border:2px solid transparent;padding:.65rem .9rem;display:flex;align-items:center;gap:.6rem;opacity:.55;transition:border-color .2s,opacity .2s,background .2s}
+.f2f .ppanel.flip{transform:rotate(180deg)}
+.ppanel.active{opacity:1;border-color:var(--pc)}
+.pp-dot{width:10px;height:10px;border-radius:50%;background:var(--pc);flex-shrink:0}
+.pp-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem}
+.pp-name{font-size:.9rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pp-status{font-size:.72rem;font-weight:600;color:#bbb;transition:color .2s}
+.ppanel.active .pp-status{color:var(--pc)}
+.pp-status.warn{color:#dc2626!important}
+.pp-status.flash{animation:flash .5s ease}
+.pp-count{display:flex;flex-direction:column;align-items:flex-end}
+.pp-val{font-size:1.1rem;font-weight:800;color:var(--pc);font-variant-numeric:tabular-nums}
+.pp-lbl{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#bbb}
+
+/* Game Area */
+.game-area{flex:1;display:flex;align-items:center;justify-content:center;padding:0 1rem;overflow:hidden;min-height:0}
+#board-wrap{width:min(100%,calc(100vh - 250px));width:min(100%,calc(100dvh - 250px));min-width:260px;max-width:460px}
+#board{background:#fff;border-radius:18px;padding:10px;box-shadow:0 4px 32px rgba(0,0,0,.04);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.bin{position:relative;aspect-ratio:1;display:grid;border-radius:8px;overflow:hidden}
+
+/* Squares */
+.sq{position:relative}
+.sq.lt{background:#f5f4f0}
+.sq.dk{background:#cdc3b4;cursor:pointer;transition:background .13s}
+.sq.last{background:#bdb09d}
+.sq.from{background:#b8ab97}
+.sq.step::after{content:'';position:absolute;inset:36%;border-radius:50%;background:rgba(17,17,17,.3)}
+.sq.dest::after{content:'';position:absolute;inset:18%;border-radius:50%;border:3px solid rgba(17,17,17,.3)}
+.sq.step.dest::after{inset:30%;border:4px solid rgba(17,17,17,.3);background:rgba(17,17,17,.12)}
+
+/* Pieces: flat draughts discs seen from above */
+.pcs{position:absolute;inset:0;pointer-events:none}
+.pc{position:absolute;display:flex;align-items:center;justify-content:center;z-index:1;transition:left .24s cubic-bezier(.32,.72,0,1),top .24s cubic-bezier(.32,.72,0,1),opacity .3s ease,transform .3s cubic-bezier(.32,.72,0,1)}
+.pc.p0{--c:#d97706;--d:#b45309;--rot:0deg}
+.pc.p1{--c:#2563eb;--d:#1d4ed8;--rot:0deg}
+.f2f .pc.p1{--rot:180deg}
+.pc-in{width:82%;height:82%;border-radius:50%;
+  background:radial-gradient(circle,var(--c) 0 33%,var(--d) 33% 37%,var(--c) 37% 56%,var(--d) 56% 60%,var(--c) 60%);
+  box-shadow:0 2px 0 var(--d),0 4px 8px rgba(0,0,0,.18);
+  display:flex;align-items:center;justify-content:center;transition:box-shadow .2s}
+/* Crowns face their owner: the top player's crowns are upside down for us */
+.pc-in svg{width:52%;height:52%;display:none;transform:rotate(var(--rot))}
+/* Kings: a second disc stacked underneath, plus a crown */
+.pc.king .pc-in{background:radial-gradient(circle,var(--c) 0 56%,var(--d) 56% 60%,var(--c) 60%);box-shadow:0 2px 0 var(--d),0 4px 0 var(--c),0 6px 0 var(--d),0 8px 10px rgba(0,0,0,.2)}
+.pc.king .pc-in svg{display:block}
+.pc.sel{z-index:3}
+.pc.sel .pc-in{box-shadow:0 0 0 3px #fff,0 0 0 5px #111,0 6px 14px rgba(0,0,0,.25)}
+.pc.king.sel .pc-in{box-shadow:0 2px 0 var(--d),0 4px 0 var(--c),0 6px 0 var(--d),0 0 0 3px #fff,0 0 0 5px #111}
+.pc.taken{opacity:.3}
+.pc.gone{opacity:0;transform:scale(.3)}
+.pc.must{animation:must .45s ease 2}
+.pc.crowned .pc-in svg{animation:crown .5s cubic-bezier(.32,.72,0,1)}
+
+/* Game Over: face to face shows the result twice, once for each side of the table */
+.over-half{width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:.9rem}
+#over-top{display:none}
+#over{flex-direction:column-reverse}
+.f2f #over{flex-direction:column;justify-content:space-evenly;gap:1rem}
+.f2f #over-top{display:flex;transform:rotate(180deg)}
+.f2f .over-half .over-title{font-size:1.6rem}
+
+/* Same side on a big screen: let the board grow */
+body:not(.f2f) #app{max-width:760px}
+body:not(.f2f) #board-wrap{max-width:720px}
+
+/* Mouse hover feedback */
+@media(hover:hover){
+  .sq.can:hover{background:#b8ab97}
+  .sq.step:hover::after,.sq.dest:hover::after{border-color:rgba(17,17,17,.5);background:rgba(17,17,17,.2)}
+  .sq.step:not(.dest):hover::after{background:rgba(17,17,17,.5)}
+}
+
+@keyframes must{50%{transform:scale(1.18)}}
+@keyframes crown{0%{transform:rotate(calc(var(--rot) - 40deg)) scale(0)}100%{transform:rotate(var(--rot)) scale(1)}}
+@keyframes flash{0%,100%{opacity:1}50%{opacity:.3}}
+
+@media(max-width:400px){
+  .ppanel{margin:.5rem .75rem;padding:.5rem .75rem}
+  .game-area{padding:0 .5rem}
+  #board{padding:6px;border-radius:14px}
+}
