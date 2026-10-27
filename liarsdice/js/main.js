@@ -13,8 +13,8 @@ function saveState() {
 
 // --- Audio (game specific) ---
 function sndShake(intensity=1) {
-  if(!window.actx) return;
-  const a=window.actx, now=a.currentTime;
+  if(typeof actx==='undefined' || !actx) return;
+  const a=actx, now=a.currentTime;
   const events=Math.min(Math.floor(intensity*4), 15);
   for(let i=0;i<events;i++) {
     const t=now+Math.random()*0.3;
@@ -406,7 +406,8 @@ document.getElementById('btn-liar').onclick = () => {
   if(G.players[loserIdx].dice > 0) {
     G.turn = loserIdx; // Loser starts next round
   } else {
-    // Loser eliminated, next active player starts
+    // Loser eliminated, the next active player after them starts
+    G.turn = loserIdx;
     do {
       G.turn = (G.turn + 1) % G.players.length;
     } while(G.players[G.turn].dice === 0);
@@ -423,6 +424,7 @@ document.getElementById('btn-liar').onclick = () => {
 };
 
 document.getElementById('btn-next-round').onclick = () => {
+  if(G.players.filter(p => p.dice > 0).length <= 1) return; // Game is decided, game over is on its way
   if(window.sndClick) window.sndClick();
   G.round++;
   startRound();

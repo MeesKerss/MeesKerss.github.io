@@ -205,8 +205,12 @@ async function playTurn(idx) {
         if(window.sndScore) window.sndScore();
         await new Promise(r => setTimeout(r, 400));
         
-        // Move captured stones
+        // Move captured stones. animateDrop only adds to the store, so empty both pits first
         const oppStones = G.board[opp];
+        G.board[opp] = 0;
+        G.board[curr] = 0;
+        document.getElementById(`lbl-${opp}`).textContent = 0;
+        document.getElementById(`lbl-${curr}`).textContent = 0;
         for(let s=0; s<oppStones; s++) {
           await animateDrop(opp, store);
         }

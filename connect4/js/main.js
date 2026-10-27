@@ -22,26 +22,8 @@ const overEl = document.getElementById('over');
 const notifEl = document.getElementById('notif');
 const hPlayer = document.getElementById('h-player');
 
-// --- Audio ---
-let actx;
-function initAudio() {
-  if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
-  if(actx.state === 'suspended') actx.resume();
-}
-
-function sndClick() {
-  if(!actx) return;
-  const osc = actx.createOscillator();
-  const gain = actx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(800, actx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(600, actx.currentTime + 0.04);
-  gain.gain.setValueAtTime(0.05, actx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.04);
-  osc.connect(gain); gain.connect(actx.destination);
-  osc.start(); osc.stop(actx.currentTime + 0.04);
-}
-
+// --- Audio (game specific) ---
+// Shared sounds (sndClick, sndWin) come from audio.js
 function sndDrop() {
   if(!actx) return;
   const osc = actx.createOscillator();
@@ -53,22 +35,6 @@ function sndDrop() {
   gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.08);
   osc.connect(gain); gain.connect(actx.destination);
   osc.start(); osc.stop(actx.currentTime + 0.08);
-}
-
-function sndWin() {
-  if(!actx) return;
-  const freqs = [392, 493.88, 587.33, 783.99]; // G chord
-  freqs.forEach((f, i) => {
-    const osc = actx.createOscillator();
-    const gain = actx.createGain();
-    osc.frequency.value = f;
-    gain.gain.setValueAtTime(0, actx.currentTime + i*0.08);
-    gain.gain.linearRampToValueAtTime(0.05, actx.currentTime + i*0.08 + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + i*0.08 + 0.3);
-    osc.connect(gain); gain.connect(actx.destination);
-    osc.start(actx.currentTime + i*0.08);
-    osc.stop(actx.currentTime + i*0.08 + 0.3);
-  });
 }
 
 // --- Setup ---
@@ -265,12 +231,17 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   localStorage.removeItem('c4_state');
   location.reload();
 });
+document.getElementById('btn-play-again').addEventListener('click', () => {
+  localStorage.removeItem('c4_state');
+  location.reload();
+});
 
 function initApp() {
   const saved = localStorage.getItem('c4_state');
   if(saved) {
     try {
       G = JSON.parse(saved);
+      G.locked = false; // State is saved mid-drop with the lock still on
       setupEl.style.display = 'none';
       appEl.style.display = 'flex';
       renderBoard();

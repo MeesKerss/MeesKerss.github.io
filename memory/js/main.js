@@ -205,6 +205,10 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   localStorage.removeItem('memory_state');
   location.reload();
 });
+document.getElementById('btn-play-again').addEventListener('click', () => {
+  localStorage.removeItem('memory_state');
+  location.reload();
+});
 
 function initApp() {
   const saved = localStorage.getItem('memory_state');
@@ -216,7 +220,7 @@ function initApp() {
       
       // If we loaded mid-timeout (locked), unlock it and apply the visual state instantly
       G.locked = false;
-      G.firstPick = null; // Should be null anyway if saved correctly
+      // firstPick is kept: the state is saved with one card face up after the first pick
       
       renderBoard();
       if(G.over) showGameOver();

@@ -840,12 +840,18 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   localStorage.removeItem('yahtzee_state');
   location.reload();
 });
+document.getElementById('btn-play-again').addEventListener('click', () => {
+  localStorage.removeItem('yahtzee_state');
+  location.reload();
+});
 
 function initApp() {
   const saved = localStorage.getItem('yahtzee_state');
   if(saved) {
     try {
       G = JSON.parse(saved);
+      // Reloaded during the score animation: the score is saved but the turn hadn't passed yet
+      if(!isDone() && ALL.filter(k=>G.sheets[G.cur][k]!==undefined).length >= G.round) nextTurn();
       document.getElementById('setup').style.display='none';
       const app = document.getElementById('app'); 
       app.style.display='flex'; app.style.flexDirection='column';

@@ -272,6 +272,10 @@ document.getElementById('btn-restart').addEventListener('click', () => {
   localStorage.removeItem('dots_state');
   location.reload();
 });
+document.getElementById('btn-play-again').addEventListener('click', () => {
+  localStorage.removeItem('dots_state');
+  location.reload();
+});
 
 function initApp() {
   const saved = localStorage.getItem('dots_state');
