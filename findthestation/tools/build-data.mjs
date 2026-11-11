@@ -80,7 +80,10 @@ async function buildRail() {
   for (const s of net.stops) if (!pointInMultiPolygon([s.lon, s.lat], allPolys)) s.modes = [];
 
   // Intercity: stops served by long-distance relations.
-  const icRels = els.filter((e) => e.type === 'relation' && (e.tags?.service === 'long_distance' || /intercity/i.test(e.tags?.name || '')));
+  const excl = cfg.intercityExcludeName ? new RegExp(cfg.intercityExcludeName) : null;
+  const icRels = els.filter((e) => e.type === 'relation'
+    && ((cfg.intercityServices || ['long_distance']).includes(e.tags?.service) || /intercity/i.test(e.tags?.name || ''))
+    && !(excl && excl.test(e.tags?.name || '')));
   const icNet = buildNetwork(icRels.concat(els.filter((e) => e.type !== 'relation')), { modes: ['train'], stripPrefixes: cfg.stripPrefixes, aliases: cfg.aliases, stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters, tolerance: cfg.tolerance });
   const icNames = new Set(icNet.stops.map((s) => s.name));
   return { net, areas, intercityStops: net.stops.filter((s) => icNames.has(s.name)).map((s) => s.id) };
