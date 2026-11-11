@@ -270,6 +270,7 @@ function shake(el) {
 
 // --- Hand-off ---
 function showPass() {
+  document.getElementById('own-sec').classList.remove('peek');
   const p = G.turn, o = 1 - p;
   const nameEl = document.getElementById('pass-name');
   nameEl.textContent = G.names[p];
@@ -450,6 +451,23 @@ function renderBattle() {
     </div>
   `).join('');
 }
+
+// --- Hold to peek at your own fleet ---
+// Your fleet stays covered during battle so the other player can't glance at the phone.
+const ownSec = document.getElementById('own-sec');
+const peekCover = document.getElementById('peek-cover');
+const setPeek = on => ownSec.classList.toggle('peek', on);
+peekCover.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  peekCover.setPointerCapture?.(e.pointerId);
+  setPeek(true);
+});
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => peekCover.addEventListener(ev, () => setPeek(false)));
+peekCover.addEventListener('contextmenu', e => e.preventDefault());
+peekCover.addEventListener('keydown', e => { if(e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setPeek(true); } });
+peekCover.addEventListener('keyup', () => setPeek(false));
+peekCover.addEventListener('blur', () => setPeek(false));
+window.addEventListener('blur', () => setPeek(false));
 
 function fire(r, c) {
   if(locked || G.passing || G.phase !== 'battle') return;

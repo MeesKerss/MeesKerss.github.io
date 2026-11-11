@@ -79,6 +79,12 @@
 
     <!-- Own fleet during battle -->
     <div id="own-sec" class="own-sec">
+      <!-- Covers your fleet so the other player can't glance at it; hold to peek -->
+      <button type="button" class="peek-cover" id="peek-cover" aria-label="Hold to see your fleet">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+        <span class="peek-title">Your fleet</span>
+        <span class="peek-sub">Hold to look</span>
+      </button>
       <div class="own-map">
         <div class="b-lbl">Your fleet</div>
         <div class="board small" id="own-board"></div>
