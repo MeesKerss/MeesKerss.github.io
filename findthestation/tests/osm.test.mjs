@@ -66,3 +66,48 @@ test('cleanName strips prefix and applies alias', () => {
 test('slugify removes accents and punctuation', () => {
   assert.equal(slugify("Kon. Wilhelminaplein / Café 't Hoekje"), 'kon-wilhelminaplein-cafe-t-hoekje');
 });
+
+import { relationPolygons } from '../tools/osm.mjs';
+const w = (role, pts) => ({ type: 'way', role, geometry: pts.map(([lon, lat]) => ({ lon, lat })) });
+test('relationPolygons stitches split outer ways and attaches holes', () => {
+  const rel = { type: 'relation', members: [
+    w('outer', [[0, 0], [10, 0], [10, 10]]),
+    w('outer', [[0, 0], [0, 10], [10, 10]]), // reversed direction piece
+    w('inner', [[4, 4], [6, 4], [6, 6], [4, 6], [4, 4]]),
+    w('outer', [[20, 20], [21, 20], [21, 21], [20, 20]]),
+  ] };
+  const polys = relationPolygons(rel);
+  assert.equal(polys.length, 2);
+  const big = polys.find((p) => p[0].some(([x]) => x === 10));
+  assert.equal(big.length, 2);
+  assert.equal(big[0].length, 5);
+  assert.deepEqual(big[0][0], big[0].at(-1));
+});
+
+test('cleanName stationWords strips "Station X" and glued "Xstation"', () => {
+  const o = { stationWords: true };
+  assert.equal(cleanName('Station Gein', [], {}, o), 'Gein');
+  assert.equal(cleanName('Amstelstation', [], {}, o), 'Amstel');
+  assert.equal(cleanName('Station Zuid WTC-zijde', [], { 'Zuid WTC-zijde': 'Zuid' }, o), 'Zuid');
+  assert.equal(cleanName('Centraal Station', [], {}, o), 'Centraal Station');
+  assert.equal(cleanName('Station', [], {}, o), 'Station');
+  assert.equal(cleanName('Station Gein', [], {}), 'Station Gein');
+});
+
+import { chainLines } from '../tools/osm.mjs';
+test('chainLines joins touching pieces in any direction', () => {
+  const chains = chainLines([[[0, 0], [1, 0]], [[2, 0], [1, 0]], [[2, 0], [3, 0]], [[9, 9], [10, 10]]]);
+  assert.equal(chains.length, 2);
+  const long = chains.find((c) => c.length === 4);
+  assert.ok(long);
+  const xs = long.map((p) => p[0]);
+  assert.ok(JSON.stringify(xs) === '[0,1,2,3]' || JSON.stringify(xs) === '[3,2,1,0]');
+});
+test('buildNetwork emits one chained polyline for contiguous ways', () => {
+  const els = [node(1, 'A', 52.3, 4.9), node(2, 'B', 52.31, 4.9),
+    { type: 'relation', id: 1, tags: { route: 'tram', ref: '5' }, members: [stopM(1, 52.3, 4.9), stopM(2, 52.31, 4.9),
+      wayM(1, [[4.9, 52.3], [4.9, 52.305]]), wayM(2, [[4.9, 52.305], [4.9, 52.31]])] }];
+  const { lines } = buildNetwork(els, opts);
+  assert.equal(lines[0].coords.length, 1);
+  assert.deepEqual(lines[0].coords[0], [[4.9, 52.3], [4.9, 52.31]]);
+});

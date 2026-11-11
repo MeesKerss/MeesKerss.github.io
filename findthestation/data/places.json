@@ -1,0 +1,46 @@
+{
+  "places": [
+    {
+      "id": "amsterdam",
+      "name": "Amsterdam",
+      "center": [
+        4.9,
+        52.37
+      ],
+      "zoom": 11.5,
+      "bounds": [
+        [
+          4.77377,
+          52.2747
+        ],
+        [
+          5.04458,
+          52.42208
+        ]
+      ],
+      "data": "amsterdam",
+      "stopCount": 531
+    },
+    {
+      "id": "netherlands",
+      "name": "Netherlands",
+      "center": [
+        5.3,
+        52.2
+      ],
+      "zoom": 6.8,
+      "bounds": [
+        [
+          3.59497,
+          50.77196
+        ],
+        [
+          7.20038,
+          53.45857
+        ]
+      ],
+      "data": "netherlands",
+      "stopCount": 398
+    }
+  ]
+}
