@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Find the Station</title>
+<meta name="description" content="Guess where every station is. A map quiz on one globe."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet"/>
+<link href="css/style.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+</head>
+<body>
+<div id="map" aria-label="Map"></div>
+
+<!-- Globe / place chrome -->
+<a class="home-link" href="/" aria-label="Back to mkers.nl">mkers.nl</a>
+<div id="place-header" class="place-header" hidden></div>
+<div id="panel" class="panel" hidden></div>
+
+<!-- Play chrome -->
+<div id="prompt" class="prompt" hidden></div>
+<div id="streak" class="streak" hidden></div>
+<div id="toast" class="toast" aria-live="polite"></div>
+<div id="end" class="end" hidden></div>
+
+<div id="loading" class="loading">Loading…</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
