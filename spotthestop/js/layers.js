@@ -3,7 +3,7 @@ const ml = () => globalThis.maplibregl;
 
 export const COLORS = {
   ink: '#111', paper: '#f0ede8', line: '#9a968f', lineFocus: '#6f6b64',
-  correct: '#16a34a', wrong: '#dc2626', reveal: '#d97706',
+  correct: '#16a34a', wrong: '#dc2626', reveal: '#d97706', found: '#86d6a0',
 };
 
 const SRC_L = 'fts-lines';
@@ -46,9 +46,9 @@ export function showPack(map, placeData, pack, { hard = false, mastered = [], pr
     paint: {
       'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 2.5, 9, 3.5, 11, 4, 15, 7],
       'circle-color': ['match', state,
-        'wrong', COLORS.wrong, 'correct', COLORS.correct, 'reveal', COLORS.reveal,
+        'wrong', COLORS.wrong, 'correct', COLORS.correct, 'reveal', COLORS.reveal, 'found', COLORS.found,
         ['case', ['get', 'mastered'], COLORS.ink, '#ffffff']],
-      'circle-stroke-color': ['match', state, 'wrong', COLORS.wrong, 'correct', COLORS.correct, 'reveal', COLORS.reveal, COLORS.ink],
+      'circle-stroke-color': ['match', state, 'wrong', COLORS.wrong, 'correct', COLORS.correct, 'reveal', COLORS.reveal, 'found', COLORS.correct, COLORS.ink],
       'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 12, 1.6],
     },
   });

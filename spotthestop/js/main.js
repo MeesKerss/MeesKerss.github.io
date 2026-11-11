@@ -118,6 +118,7 @@ async function startPack(place, packId, { hard = false, resume = false } = {}) {
   M.cancelFlight();
   ui.hidePanel(); ui.hideEnd();
   L.showPack(app.map, app.data, app.pack, { hard });
+  markFound();
   for (const id of app.run.wrongIds) L.setStopState(app.map, id, 'wrong'); // restore marks on a resumed station
   app.map.fitBounds(L.packBounds(app.data, app.pack), { padding: playPadding(), duration: M.reducedMotion() ? 0 : 900, maxZoom: 14.5 });
   ui.setStreak(app.run.streak);
@@ -184,11 +185,17 @@ function onAnswered(res, clicked, target) {
   app.timer = setTimeout(next, 2600);
 }
 
+// Stations already found this round stay green, so progress shows on the map.
+function markFound() {
+  for (const r of app.run.results) if (r.points > 0) L.setStopState(app.map, r.id, 'found');
+}
+
 function next() {
   clearTimeout(app.timer);
   if (app.state !== 'play' || !app.run) return;
   L.clearTags();
   L.resetStopStates(app.map);
+  markFound();
   L.setLinesVisible(app.map, !app.hard);
   if (advance(app.run)) showCurrent();
   else finishPack();
