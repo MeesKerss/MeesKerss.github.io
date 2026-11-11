@@ -1,0 +1,25 @@
+{
+  "id": "stockholm",
+  "name": "Stockholm",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    18.07,
+    59.33
+  ],
+  "zoom": 11,
+  "bbox": [
+    59.2,
+    17.75,
+    59.45,
+    18.2
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 350,
+  "unlockMin": 0.7
+}

@@ -1,0 +1,51 @@
+{
+  "id": "new-york",
+  "name": "New York",
+  "kind": "city",
+  "region": "North America",
+  "center": [
+    -73.95,
+    40.73
+  ],
+  "zoom": 11,
+  "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"][\"network\"=\"NYC Subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 350,
+  "unlockMin": 0.7,
+  "disambiguate": true,
+  "lineNames": {
+    "1": "1 train",
+    "2": "2 train",
+    "3": "3 train",
+    "4": "4 train",
+    "5": "5 train",
+    "6": "6 train",
+    "7": "7 train",
+    "A": "A train",
+    "B": "B train",
+    "C": "C train",
+    "D": "D train",
+    "E": "E train",
+    "F": "F train",
+    "G": "G train",
+    "J": "J train",
+    "L": "L train",
+    "M": "M train",
+    "N": "N train",
+    "Q": "Q train",
+    "R": "R train",
+    "W": "W train",
+    "Z": "Z train",
+    "S": "Shuttles"
+  }
+}

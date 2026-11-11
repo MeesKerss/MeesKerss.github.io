@@ -1,0 +1,7 @@
+{
+  "id": "frankfurt", "name": "Frankfurt", "kind": "city", "region": "Europe",
+  "center": [8.68, 50.12], "zoom": 11, "bbox": [50.00, 8.45, 50.26, 8.85],
+  "routes": ["rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"],
+  "stripPrefixes": [], "stripSuffixes": [], "aliases": {},
+  "mergeMeters": 350, "unlockMin": 0.7
+}

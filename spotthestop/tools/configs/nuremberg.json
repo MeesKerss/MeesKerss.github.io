@@ -1,0 +1,7 @@
+{
+  "id": "nuremberg", "name": "Nuremberg", "kind": "city", "region": "Europe",
+  "center": [11.07, 49.45], "zoom": 11, "bbox": [49.33, 10.90, 49.53, 11.20],
+  "routes": ["rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"],
+  "stripPrefixes": [], "stripSuffixes": [], "aliases": {},
+  "mergeMeters": 350, "unlockMin": 0.7
+}

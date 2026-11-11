@@ -1,0 +1,25 @@
+{
+  "id": "paris",
+  "name": "Paris",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    2.35,
+    48.86
+  ],
+  "zoom": 11,
+  "bbox": [
+    48.7,
+    2.15,
+    49.0,
+    2.6
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 600,
+  "unlockMin": 0.7
+}

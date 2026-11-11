@@ -1,0 +1,28 @@
+{
+  "id": "berlin",
+  "name": "Berlin",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    13.4,
+    52.52
+  ],
+  "zoom": 11,
+  "bbox": [
+    52.33,
+    13.08,
+    52.68,
+    13.77
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [
+    "S+U",
+    "U"
+  ],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 350,
+  "unlockMin": 0.7
+}

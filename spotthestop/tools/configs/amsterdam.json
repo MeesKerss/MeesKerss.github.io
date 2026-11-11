@@ -1,0 +1,51 @@
+{
+  "id": "amsterdam",
+  "name": "Amsterdam",
+  "kind": "city",
+  "center": [
+    4.9,
+    52.37
+  ],
+  "zoom": 11.5,
+  "bbox": [
+    52.27,
+    4.72,
+    52.44,
+    5.08
+  ],
+  "boundary": {
+    "admin_level": "8",
+    "name": "Amsterdam"
+  },
+  "areaMerge": {
+    "Westpoort": "West"
+  },
+  "stripPrefixes": [
+    "Amsterdam"
+  ],
+  "aliases": {
+    "Centraal": "Centraal Station",
+    "Amsterdam Centraal": "Centraal Station",
+    "Station Zuid": "Zuid",
+    "Station RAI": "RAI",
+    "Station Lelylaan": "Lelylaan",
+    "Station Sloterdijk": "Sloterdijk",
+    "Station Amstel": "Amstel",
+    "Station Bijlmer ArenA": "Bijlmer ArenA",
+    "Station Muiderpoort": "Muiderpoort",
+    "Zuid WTC-zijde": "Zuid"
+  },
+  "mergeMeters": 400,
+  "tolerance": 4e-05,
+  "unlockMin": 0.7,
+  "areasGeoJSON": {
+    "url": "https://api.data.amsterdam.nl/v1/gebieden/stadsdelen/?_format=geojson&_pageSize=50",
+    "nameProp": "naam"
+  },
+  "stationWords": true,
+  "region": "Netherlands",
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"~\"^(subway|tram|light_rail|bus|ferry)$\"][\"operator\"=\"GVB\"]({{bbox}})",
+    "rel[\"type\"=\"route\"][\"route\"=\"train\"]({{bbox}})"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "budapest",
+  "name": "Budapest",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    19.05,
+    47.5
+  ],
+  "zoom": 11,
+  "bbox": [
+    47.4,
+    18.95,
+    47.6,
+    19.25
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 350,
+  "unlockMin": 0.7
+}

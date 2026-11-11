@@ -1,0 +1,422 @@
+{
+  "places": [
+    {
+      "id": "amsterdam",
+      "name": "Amsterdam",
+      "center": [
+        4.9,
+        52.37
+      ],
+      "zoom": 11.5,
+      "bounds": [
+        [
+          4.77377,
+          52.2747
+        ],
+        [
+          5.04458,
+          52.42208
+        ]
+      ],
+      "data": "amsterdam",
+      "stopCount": 531,
+      "region": "Netherlands"
+    },
+    {
+      "id": "rotterdam",
+      "name": "Rotterdam",
+      "center": [
+        4.48,
+        51.92
+      ],
+      "zoom": 11.5,
+      "bounds": [
+        [
+          4.22472,
+          51.83334
+        ],
+        [
+          4.60061,
+          52.08233
+        ]
+      ],
+      "data": "rotterdam",
+      "stopCount": 470,
+      "region": "Netherlands"
+    },
+    {
+      "id": "netherlands",
+      "name": "Netherlands",
+      "center": [
+        5.3,
+        52.2
+      ],
+      "zoom": 6.8,
+      "bounds": [
+        [
+          3.59497,
+          50.77196
+        ],
+        [
+          7.20038,
+          53.45857
+        ]
+      ],
+      "data": "netherlands",
+      "stopCount": 398,
+      "region": "Netherlands"
+    },
+    {
+      "id": "berlin",
+      "name": "Berlin",
+      "center": [
+        13.4,
+        52.52
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          13.19987,
+          52.4166
+        ],
+        [
+          13.63322,
+          52.59566
+        ]
+      ],
+      "data": "berlin",
+      "stopCount": 170,
+      "region": "Europe"
+    },
+    {
+      "id": "hamburg",
+      "name": "Hamburg",
+      "center": [
+        10,
+        53.56
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          9.94408,
+          53.5281
+        ],
+        [
+          10.28694,
+          53.70789
+        ]
+      ],
+      "data": "hamburg",
+      "stopCount": 93,
+      "region": "Europe"
+    },
+    {
+      "id": "munich",
+      "name": "Munich",
+      "center": [
+        11.57,
+        48.14
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          11.47358,
+          48.08835
+        ],
+        [
+          11.70346,
+          48.2647
+        ]
+      ],
+      "data": "munich",
+      "stopCount": 96,
+      "region": "Europe"
+    },
+    {
+      "id": "frankfurt",
+      "name": "Frankfurt",
+      "center": [
+        8.68,
+        50.12
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          8.53748,
+          50.09922
+        ],
+        [
+          8.75375,
+          50.21902
+        ]
+      ],
+      "data": "frankfurt",
+      "stopCount": 84,
+      "region": "Europe"
+    },
+    {
+      "id": "nuremberg",
+      "name": "Nuremberg",
+      "center": [
+        11.07,
+        49.45
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          10.95753,
+          49.3987
+        ],
+        [
+          11.14055,
+          49.49398
+        ]
+      ],
+      "data": "nuremberg",
+      "stopCount": 49,
+      "region": "Europe"
+    },
+    {
+      "id": "paris",
+      "name": "Paris",
+      "center": [
+        2.35,
+        48.86
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          2.22831,
+          48.72844
+        ],
+        [
+          2.48034,
+          48.94597
+        ]
+      ],
+      "data": "paris",
+      "stopCount": 327,
+      "region": "Europe"
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "center": [
+        -0.12,
+        51.51
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          -0.6109,
+          51.40239
+        ],
+        [
+          0.2518,
+          51.7054
+        ]
+      ],
+      "data": "london",
+      "stopCount": 267,
+      "region": "Europe"
+    },
+    {
+      "id": "madrid",
+      "name": "Madrid",
+      "center": [
+        -3.7,
+        40.42
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          -3.87441,
+          40.28229
+        ],
+        [
+          -3.47779,
+          40.55985
+        ]
+      ],
+      "data": "madrid",
+      "stopCount": 241,
+      "region": "Europe"
+    },
+    {
+      "id": "vienna",
+      "name": "Vienna",
+      "center": [
+        16.37,
+        48.21
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          16.26084,
+          48.1305
+        ],
+        [
+          16.50841,
+          48.27759
+        ]
+      ],
+      "data": "vienna",
+      "stopCount": 99,
+      "region": "Europe"
+    },
+    {
+      "id": "brussels",
+      "name": "Brussels",
+      "center": [
+        4.35,
+        50.85
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          4.26708,
+          50.81222
+        ],
+        [
+          4.46411,
+          50.89693
+        ]
+      ],
+      "data": "brussels",
+      "stopCount": 60,
+      "region": "Europe"
+    },
+    {
+      "id": "prague",
+      "name": "Prague",
+      "center": [
+        14.42,
+        50.08
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          14.29116,
+          50.02789
+        ],
+        [
+          14.57676,
+          50.12663
+        ]
+      ],
+      "data": "prague",
+      "stopCount": 57,
+      "region": "Europe"
+    },
+    {
+      "id": "stockholm",
+      "name": "Stockholm",
+      "center": [
+        18.07,
+        59.33
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          17.81272,
+          59.23501
+        ],
+        [
+          18.13299,
+          59.41568
+        ]
+      ],
+      "data": "stockholm",
+      "stopCount": 98,
+      "region": "Europe"
+    },
+    {
+      "id": "lisbon",
+      "name": "Lisbon",
+      "center": [
+        -9.14,
+        38.72
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          -9.22412,
+          38.70612
+        ],
+        [
+          -9.09972,
+          38.79327
+        ]
+      ],
+      "data": "lisbon",
+      "stopCount": 50,
+      "region": "Europe"
+    },
+    {
+      "id": "budapest",
+      "name": "Budapest",
+      "center": [
+        19.05,
+        47.5
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          19.02025,
+          47.46373
+        ],
+        [
+          19.14803,
+          47.56033
+        ]
+      ],
+      "data": "budapest",
+      "stopCount": 48,
+      "region": "Europe"
+    },
+    {
+      "id": "new-york",
+      "name": "New York",
+      "center": [
+        -73.95,
+        40.73
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          -74.03115,
+          40.57614
+        ],
+        [
+          -73.75436,
+          40.90375
+        ]
+      ],
+      "data": "new-york",
+      "stopCount": 442,
+      "region": "North America"
+    },
+    {
+      "id": "tokyo",
+      "name": "Tokyo",
+      "center": [
+        139.74,
+        35.69
+      ],
+      "zoom": 11,
+      "bounds": [
+        [
+          139.61286,
+          35.58731
+        ],
+        [
+          139.94165,
+          35.79191
+        ]
+      ],
+      "data": "tokyo",
+      "stopCount": 217,
+      "region": "Asia"
+    }
+  ]
+}
