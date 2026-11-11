@@ -166,7 +166,7 @@ function onAnswered(res, clicked, target) {
     return;
   }
   L.setStopState(app.map, clicked.id, 'wrong');
-  L.showTag(app.map, clicked, `That's ${clicked.name}`, 'wrong', 1500);
+  L.showTag(app.map, clicked, clicked.name, 'wrong', 1500);
   ui.setTries(MAX_TRIES - app.run.tries);
   ui.setStreak(app.run.streak);
   if (res.outcome === 'wrong') {

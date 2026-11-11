@@ -1,5 +1,5 @@
-// CLI: node findthestation/tools/build-data.mjs <place> [--fresh]
-// Pulls OSM data via Overpass, writes findthestation/data/<place>/{stops,lines,packs}.json and upserts data/places.json.
+// CLI: node spotthestop/tools/build-data.mjs <place> [--fresh]
+// Pulls OSM data via Overpass, writes spotthestop/data/<place>/{stops,lines,packs}.json and upserts data/places.json.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,7 +22,7 @@ const isTourist = (t) => t.historic || t['railway:preserved'] || t.tourism || /^
 async function fetchGeoJSON(url, cacheKey) {
   const file = join(HERE, '.cache', `${cacheKey}.geojson`);
   try { if (!fresh) return JSON.parse(await readFile(file, 'utf8')).features; } catch { /* miss */ }
-  const res = await fetch(url, { headers: { 'User-Agent': 'findthestation-data-builder' } });
+  const res = await fetch(url, { headers: { 'User-Agent': 'spotthestop-data-builder' } });
   if (!res.ok) throw new Error(`${url} -> ${res.status}`);
   const text = await res.text();
   await mkdir(join(HERE, '.cache'), { recursive: true });

@@ -1,4 +1,4 @@
-// CLI: node findthestation/tools/build-style.mjs — regenerates style/basemap.json (label-free, paper palette, globe).
+// CLI: node spotthestop/tools/build-style.mjs — regenerates style/basemap.json (label-free, paper palette, globe).
 import { writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -43,7 +43,7 @@ for (const layer of src.layers) {
 
 const style = {
   version: 8,
-  name: 'findthestation-paper',
+  name: 'spotthestop-paper',
   projection: { type: 'globe' },
   sky: { 'sky-color': P.paper, 'horizon-color': P.paper, 'fog-color': P.paper, 'atmosphere-blend': ['interpolate', ['linear'], ['zoom'], 0, 0.6, 5, 0] },
   sources: { openmaptiles: src.sources.openmaptiles },

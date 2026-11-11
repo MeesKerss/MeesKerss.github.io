@@ -20,7 +20,7 @@ export async function overpass(query, cacheKey, { fresh = false } = {}) {
       try {
         const res = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'findthestation-data-builder' },
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'spotthestop-data-builder' },
           body: 'data=' + encodeURIComponent(query),
         });
         const text = await res.text();

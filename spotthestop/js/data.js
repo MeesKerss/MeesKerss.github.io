@@ -1,4 +1,4 @@
-// Static data loading (memoized). Paths are relative to /findthestation/.
+// Static data loading (memoized). Paths are relative to /spotthestop/.
 import { buildGraph } from './graph.js';
 
 const cache = new Map();

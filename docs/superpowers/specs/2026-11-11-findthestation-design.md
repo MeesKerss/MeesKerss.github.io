@@ -1,4 +1,4 @@
-# Master Prompt — "Find the Station": a station-guessing game on one globe
+# Master Prompt — "Spot the Stop": a station-guessing game on one globe
 
 > Paste this whole document into a fresh build session. It is the full brief.
 > Items marked **(builder's call)** were decided while writing this brief, not by the owner. Change them if there's a better option.
@@ -32,11 +32,11 @@ Success means it feels **clean, minimal and genuinely challenging**. An Amsterda
 
 ## 2. Where it lives in the repo
 
-- New folder **`/findthestation/`** (the game is called **Find the Station**, the owner's choice), built like the other games: `index.html` plus `css/` and `js/` subfolders. Plain HTML/CSS/JS with **no build step**, matching the rest of the repo.
+- New folder **`/spotthestop/`** (the game is called **Spot the Stop**, the owner's choice; renamed from "Find the Station"), built like the other games: `index.html` plus `css/` and `js/` subfolders. Plain HTML/CSS/JS with **no build step**, matching the rest of the repo.
 - Add a card on the homepage `index.html` in the same `game-row` style as the others, with `--accent` set to a strong transit blue (builder's call).
 - Reuse `/shared/css/reset.css` where it fits.
-- Data files live in **`/findthestation/data/`** (see §6).
-- A data-build script lives in **`/findthestation/tools/`** (Node or Python). It's run by hand, and its output is committed.
+- Data files live in **`/spotthestop/data/`** (see §6).
+- A data-build script lives in **`/spotthestop/tools/`** (Node or Python). It's run by hand, and its output is committed.
 
 ## 3. Game flow
 
@@ -56,7 +56,7 @@ Success means it feels **clean, minimal and genuinely challenging**. An Amsterda
 3. A prompt card at the top shows the target station name in large type.
 4. The player gets **3 tries**:
    - **Correct:** the dot flashes green and its name appears. Points are **3 / 2 / 1** depending on the try. Move to the next station.
-   - **Wrong:** the clicked dot turns red and shows its real name for about 1.5 seconds ("That's Wibautstraat"), plus a **hint showing how many stops away** the target is along the network ("2 stops away"). For packs where hop distance doesn't make sense, use straight-line distance instead ("1.2 km away"). Wrong dots stay marked for the rest of this station.
+   - **Wrong:** the clicked dot turns red and shows its real name for about 1.5 seconds ("Wibautstraat"), plus a **hint showing how many stops away** the target is along the network ("2 stops away"). For packs where hop distance doesn't make sense, use straight-line distance instead ("1.2 km away"). Wrong dots stay marked for the rest of this station.
    - **After 3 misses:** the correct dot pulses in the attention colour with its name, the lines through it light up in their **real line colours**, and play continues after a tap or a short delay.
 5. Every station in the pack is asked **once, in random order**.
 6. The end screen shows the score, accuracy percentage, best streak, and **the stations you missed**, which you can tap to see on the map.
@@ -114,12 +114,12 @@ Notes:
 
 ## 6. Data
 
-**Source:** OpenStreetMap via the Overpass API (stops, stations, `route=subway|tram|bus|ferry|train` relations, line colours from the `colour` tag). The **build script** in `/findthestation/tools/`:
+**Source:** OpenStreetMap via the Overpass API (stops, stations, `route=subway|tram|bus|ferry|train` relations, line colours from the `colour` tag). The **build script** in `/spotthestop/tools/`:
 1. Queries Overpass for a place's bounding box and modes.
 2. Merges platforms/stop positions into one stop per name (with an exceptions list for real duplicates).
 3. Builds route line geometries and the **stop adjacency graph** (used for "N stops away").
 4. Assigns stops to area or province packs using boundary polygons.
-5. Writes compact JSON (or GeoJSON) files to `/findthestation/data/<place>/`, plus a `places.json` index.
+5. Writes compact JSON (or GeoJSON) files to `/spotthestop/data/<place>/`, plus a `places.json` index.
 
 **Data shape (builder may refine):**
 - `places.json`: list of places with `id`, `name`, globe position, default camera, and a list of packs (`id`, `name`, `mode`, unlock rule, file reference).

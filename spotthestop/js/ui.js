@@ -117,7 +117,7 @@ export function showPlaceMenu({ places, masteryById, ringHtml, onSelect, onHover
   el.className = 'panel panel-globe';
   el.innerHTML = `
     <div class="panel-head">
-      <h1 class="title">Find the Station</h1>
+      <h1 class="title">Spot the Stop</h1>
       <p class="sub">Every station is a dot. No names. Where is it?</p>
     </div>
     <div class="place-list">
