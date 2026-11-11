@@ -5,6 +5,7 @@ import * as L from './layers.js';
 import * as ui from './ui.js';
 import { createRun, currentTarget, guess, advance, summary, MAX_TRIES } from './engine.js';
 import { nearestStop } from './hit.js';
+import { sfx, unlockAudio, isMuted, setMuted } from './sound.js';
 import {
   loadProgress, saveProgress, recordRun, isUnlocked, canHardMode, placeMastery,
   saveResume, getResume, clearResume, RESUME_MIN_STOPS,
@@ -59,6 +60,7 @@ async function goGlobe() {
     places: app.places, masteryById: await masteryById(), ringHtml: M.ringHtml,
     onSelect: (p) => goPlace(p), onHover: M.highlightPlaceMarker,
   });
+  if (app.place) sfx.whoosh(2.2);
   await M.showGlobe(app.map);
 }
 
@@ -74,6 +76,7 @@ async function goPlace(place, { fly = true } = {}) {
   const dataP = loadPlace(place.data);
   if (fly) {
     ui.hidePanel();
+    sfx.whoosh(from ? 2.4 : 2.0);
     const flight = M.flyToPlace(app.map, place, { fromPlace: from, padding: placePadding() });
     await Promise.race([flight, new Promise((r) => setTimeout(r, MENU_DELAY_MS))]);
     if (app.place !== place || app.state !== 'place') return;
@@ -157,6 +160,8 @@ function persistResume() {
 
 function onAnswered(res, clicked, target) {
   if (res.outcome === 'correct') {
+    if (ui.MILESTONES.includes(app.run.streak)) sfx.milestone();
+    else sfx.correct(Math.max(0, app.run.streak - 1));
     L.setStopState(app.map, clicked.id, 'correct');
     L.showTag(app.map, clicked, clicked.name, 'correct', 1100);
     ui.toast(`+${res.points}`, 'good', 900);
@@ -170,9 +175,11 @@ function onAnswered(res, clicked, target) {
   ui.setTries(MAX_TRIES - app.run.tries);
   ui.setStreak(app.run.streak);
   if (res.outcome === 'wrong') {
+    sfx.wrong();
     ui.toast(hintText(res.hint), 'hint', 1800);
     return;
   }
+  sfx.reveal();
   L.setStopState(app.map, target.id, 'reveal');
   L.showPulse(app.map, target);
   L.highlightLinesThrough(app.map, app.data, app.pack, target.id);
@@ -204,6 +211,7 @@ async function finishPack() {
   for (const [id, m] of Object.entries(mastery)) M.updatePlaceMarker(id, m);
 
   app.run = null;
+  sfx.finish(s.accuracy);
   setState('end');
   ui.hidePrompt();
   ui.setStreak(0);
@@ -239,6 +247,8 @@ async function boot() {
   app.map = map;
   map.getContainer().addEventListener('pointerdown', (e) => { app.lastPointer = e.pointerType || 'mouse'; }, true);
   map.on('click', onMapClick);
+  document.addEventListener('pointerdown', unlockAudio, true);
+  ui.bindSoundButton(isMuted(), (muted) => { setMuted(muted); if (!muted) { unlockAudio(); sfx.tap(); } });
   app.places = await loadPlaces();
   M.addPlaceMarkers(map, app.places, await masteryById(), (p) => {
     if (app.state === 'globe' || app.state === 'place') goPlace(p);

@@ -58,7 +58,7 @@ export function toast(text, kind = 'info', ms = 1600) {
 }
 
 // ── Streak chip ─────────────────────────────────────────
-const MILESTONES = [5, 10, 25, 50];
+export const MILESTONES = [5, 10, 25, 50];
 export function setStreak(n) {
   const el = $('streak');
   el.hidden = n < 1;
@@ -248,4 +248,19 @@ function bindSwipe(node, onSwipe) {
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) onSwipe(dx < 0 ? 1 : -1);
   });
   node.addEventListener('pointercancel', () => { x0 = null; });
+}
+
+// ── Sound toggle ────────────────────────────────────────
+const SPEAKER_ON = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const SPEAKER_OFF = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+export function bindSoundButton(muted, onChange) {
+  const btn = $('sound');
+  let m = muted;
+  const paint = () => {
+    btn.innerHTML = m ? SPEAKER_OFF : SPEAKER_ON;
+    btn.setAttribute('aria-label', m ? 'Turn sound on' : 'Turn sound off');
+    btn.classList.toggle('off', m);
+  };
+  paint();
+  btn.onclick = () => { m = !m; paint(); onChange(m); };
 }
