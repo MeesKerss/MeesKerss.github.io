@@ -26,7 +26,6 @@
   "mergeMeters": 600,
   "tolerance": 0.0002,
   "unlockMin": 0.7,
-  "markerAnchor": "left",
   "intercityServices": [
     "long_distance",
     "high_speed",
@@ -43,5 +42,6 @@
     "Woerden",
     "Dronten",
     "Kampen Zuid"
-  ]
+  ],
+  "region": "Netherlands"
 }

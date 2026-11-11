@@ -111,3 +111,22 @@ test('buildNetwork emits one chained polyline for contiguous ways', () => {
   assert.equal(lines[0].coords.length, 1);
   assert.deepEqual(lines[0].coords[0], [[4.9, 52.3], [4.9, 52.31]]);
 });
+
+test('line without ref is keyed by the name before ":" so both directions merge', () => {
+  const els = [node(1, 'A', 51.5, -0.1), node(2, 'B', 51.51, -0.1),
+    { type: 'relation', id: 1, tags: { route: 'subway', name: 'Bakerloo line: Harrow → Elephant' }, members: [stopM(1, 51.5, -0.1), stopM(2, 51.51, -0.1)] },
+    { type: 'relation', id: 2, tags: { route: 'subway', name: 'Bakerloo line: Elephant → Harrow' }, members: [stopM(2, 51.51, -0.1), stopM(1, 51.5, -0.1)] }];
+  const { lines } = buildNetwork(els, opts);
+  assert.deepEqual(lines.map((l) => [l.id, l.ref]), [['subway-bakerloo-line', 'Bakerloo line']]);
+});
+
+test('cleanName strips configured suffixes', () => {
+  assert.equal(cleanName('Baker Street Underground Station', [], {}, { stripSuffixes: ['Underground Station'] }), 'Baker Street');
+  assert.equal(cleanName('Baker Street', [], {}, { stripSuffixes: ['Underground Station'] }), 'Baker Street');
+});
+
+test('cleanName unifies dash and apostrophe variants', () => {
+  assert.equal(cleanName('Reuilly — Diderot'), 'Reuilly - Diderot');
+  assert.equal(cleanName('Reuilly – Diderot'), 'Reuilly - Diderot');
+  assert.equal(cleanName('Regent’s Park'), "Regent's Park");
+});

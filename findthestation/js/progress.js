@@ -73,3 +73,13 @@ export function getResume(progress, packId, stopsById) {
 export function clearResume(progress, packId) {
   delete progress.resume[packId];
 }
+
+// Same as placeMastery, but derived only from saved progress (pack ids are "<place>/<pack>").
+export function placeMasteryFromProgress(progress, placeId, stopCount) {
+  if (!stopCount) return 0;
+  const ids = new Set();
+  for (const [packId, st] of Object.entries(progress.packs)) {
+    if (packId.startsWith(`${placeId}/`)) for (const id of st.mastered || []) ids.add(id);
+  }
+  return Math.min(1, ids.size / stopCount);
+}

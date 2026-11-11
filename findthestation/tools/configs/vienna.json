@@ -1,0 +1,25 @@
+{
+  "id": "vienna",
+  "name": "Vienna",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    16.37,
+    48.21
+  ],
+  "zoom": 11,
+  "bbox": [
+    48.1,
+    16.2,
+    48.33,
+    16.58
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 350,
+  "unlockMin": 0.7
+}

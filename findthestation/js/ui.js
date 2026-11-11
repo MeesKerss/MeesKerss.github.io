@@ -121,7 +121,7 @@ export function showPlaceMenu({ places, masteryById, ringHtml, onSelect, onHover
       <p class="sub">Every station is a dot. No names. Where is it?</p>
     </div>
     <div class="place-list">
-      ${places.map((p) => `
+      ${places.map((p, i) => `${i === 0 || places[i - 1].region !== p.region ? `<div class="region-head">${esc(p.region || '')}</div>` : ''}
         <button class="place-row" data-id="${esc(p.id)}">
           ${ringHtml(masteryById[p.id] || 0)}
           <span class="place-name">${esc(p.name)}</span>
@@ -195,7 +195,7 @@ export function showPackPicker({ place, places, packs, progress, ringHtml, isUnl
         return `<section class="group">
           <div class="group-head"><span class="chip" style="--c:${MODE_COLORS[g.mode] || '#111'}">${esc(g.name)}</span></div>
           ${rest.filter((p) => !/-all$|^.*\/everything$/.test(p.id)).map(row).join('')}
-          ${lines.length ? `<details class="lines"><summary>Lines (${lines.length})</summary>${lines.map(row).join('')}</details>` : ''}
+          ${lines.length ? `<details class="lines" ${groups.length === 1 ? 'open' : ''}><summary>Lines (${lines.length})</summary>${lines.map(row).join('')}</details>` : ''}
           ${rest.filter((p) => /-all$|^.*\/everything$/.test(p.id)).map(row).join('')}
         </section>`;
       }).join('')}

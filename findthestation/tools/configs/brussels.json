@@ -1,0 +1,25 @@
+{
+  "id": "brussels",
+  "name": "Brussels",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    4.35,
+    50.85
+  ],
+  "zoom": 11,
+  "bbox": [
+    50.76,
+    4.24,
+    50.92,
+    4.5
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 500,
+  "unlockMin": 0.7
+}

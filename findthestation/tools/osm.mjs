@@ -10,8 +10,10 @@ export function slugify(s) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-export function cleanName(raw, stripPrefixes = [], aliases = {}, { stationWords = false } = {}) {
-  let name = String(raw).trim().replace(/\s+/g, ' ');
+export function cleanName(raw, stripPrefixes = [], aliases = {}, { stationWords = false, stripSuffixes = [] } = {}) {
+  let name = String(raw).trim().replace(/\s+/g, ' ')
+    .replace(/\s*[–—]\s*/g, ' - ') // en/em dash -> " - "
+    .replace(/[‘’]/g, "'");
   for (const p of stripPrefixes) {
     for (const sep of [', ', ' ']) {
       if (name.startsWith(p + sep) && name.length > p.length + sep.length) {
@@ -19,6 +21,9 @@ export function cleanName(raw, stripPrefixes = [], aliases = {}, { stationWords 
         break;
       }
     }
+  }
+  for (const suf of stripSuffixes) {
+    if (name.endsWith(' ' + suf) && name.length > suf.length + 1) { name = name.slice(0, -suf.length - 1).trim(); break; }
   }
   if (stationWords) {
     const m = name.match(/^Station (.+)$/) || name.match(/^([A-Z][a-z]{2,})station$/);
@@ -39,7 +44,7 @@ function memberPoint(m) {
 }
 
 export function buildNetwork(elements, opts) {
-  const { modes, stripPrefixes = [], aliases = {}, mergeMeters = 300, tolerance = 0.00005, stationWords = false } = opts;
+  const { modes, stripPrefixes = [], aliases = {}, mergeMeters = 300, tolerance = 0.00005, stationWords = false, stripSuffixes = [] } = opts;
   const tags = new Map();
   for (const el of elements) if (el.type !== 'relation' && el.tags) tags.set(`${el.type}/${el.id}`, el.tags);
 
@@ -73,10 +78,11 @@ export function buildNetwork(elements, opts) {
       const raw = tags.get(`${m.type}/${m.ref}`)?.name;
       const pt = memberPoint(m);
       if (!raw || !pt) continue;
-      const c = clusterFor(cleanName(raw, stripPrefixes, aliases, { stationWords }), pt, mode);
+      const c = clusterFor(cleanName(raw, stripPrefixes, aliases, { stationWords, stripSuffixes }), pt, mode);
       if (seq[seq.length - 1] !== c) seq.push(c);
     }
-    const ref = rel.tags.ref || rel.tags.name || String(rel.id);
+    // No ref: key by the route name without its direction part ("Bakerloo line: A → B" -> "Bakerloo line").
+    const ref = rel.tags.ref || (rel.tags.name ? rel.tags.name.split(':')[0].trim() : String(rel.id));
     const id = `${mode}-${slugify(ref)}`;
     if (!lineMap.has(id)) {
       lineMap.set(id, { id, ref, mode, colour: rel.tags.colour || '#111', name: rel.tags.name || ref, ways: new Map(), stops: new Set(), pairs: [] });

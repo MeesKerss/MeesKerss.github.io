@@ -1,0 +1,29 @@
+{
+  "id": "london",
+  "name": "London",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    -0.12,
+    51.51
+  ],
+  "zoom": 11,
+  "bbox": [
+    51.4,
+    -0.65,
+    51.75,
+    0.3
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [
+    "Underground Station",
+    "Station",
+    "station"
+  ],
+  "aliases": {},
+  "mergeMeters": 500,
+  "unlockMin": 0.7
+}

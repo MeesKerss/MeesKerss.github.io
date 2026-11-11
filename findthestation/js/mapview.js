@@ -1,5 +1,6 @@
 // One MapLibre map for globe and city. `maplibregl` is the global from the CDN script.
 import { spinSpeed } from './spin.js';
+import { haversineKm as haversine } from './geo.js';
 const ml = () => globalThis.maplibregl;
 
 export const reducedMotion = () => {
@@ -98,7 +99,10 @@ export async function flyToPlace(map, place, { fromPlace = null, padding } = {})
   const gen = ++flightGen;
   const target = placeCamera(map, place, padding);
   if (reducedMotion()) return fadeJump(map, target);
-  if (fromPlace) {
+  const far = fromPlace && haversine(fromPlace.center, place.center) > 400;
+  if (far) {
+    map.flyTo({ ...target, duration: 3000, curve: 1.6, essential: true });
+  } else if (fromPlace) {
     const a = fromPlace.center;
     const b = place.center;
     const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
@@ -129,19 +133,33 @@ function ringSvg(mastery) {
 
 export function addPlaceMarkers(map, places, masteryById, onSelect) {
   for (const p of places) {
-    // MapLibre positions the wrapper with a transform; the inner chip owns hover effects.
+    // MapLibre positions the wrapper with a transform; the inner dot owns hover effects.
     const wrap = document.createElement('div');
     wrap.className = 'place-marker-wrap';
     const el = document.createElement('button');
-    el.className = `place-marker anchor-${p.markerAnchor || 'bottom'}`;
+    el.className = 'place-marker';
     el.setAttribute('aria-label', p.name);
-    el.innerHTML = `${ringSvg(masteryById[p.id] || 0)}<span></span>`;
-    el.querySelector('span').textContent = p.name;
+    el.innerHTML = `${ringSvg(masteryById[p.id] || 0)}<span class="place-label"></span>`;
+    el.querySelector('.place-label').textContent = p.name;
     el.addEventListener('click', (e) => { e.stopPropagation(); onSelect(p); });
     wrap.appendChild(el);
-    const m = new (ml().Marker)({ element: wrap, anchor: p.markerAnchor || 'bottom' }).setLngLat(p.center).addTo(map);
-    markers.set(p.id, { m, el });
+    const m = new (ml().Marker)({ element: wrap, anchor: 'center' }).setLngLat(p.center).addTo(map);
+    markers.set(p.id, { m, el, wrap, place: p });
   }
+  // Places close together on screen collapse into the first one (menu order); the menu lists them all.
+  let queued = false;
+  const declutter = () => {
+    queued = false;
+    const shown = [];
+    for (const { m, wrap, place } of markers.values()) {
+      const pt = map.project(place.center);
+      const clash = shown.some((q) => Math.hypot(q.x - pt.x, q.y - pt.y) < 26);
+      wrap.classList.toggle('collapsed', clash);
+      if (!clash) shown.push(pt);
+    }
+  };
+  map.on('move', () => { if (!queued) { queued = true; requestAnimationFrame(declutter); } });
+  declutter();
 }
 
 export function updatePlaceMarker(id, mastery) {
@@ -150,7 +168,10 @@ export function updatePlaceMarker(id, mastery) {
 }
 
 export function highlightPlaceMarker(id, on) {
-  markers.get(id)?.el.classList.toggle('hover', on);
+  const k = markers.get(id);
+  if (!k) return;
+  k.el.classList.toggle('hover', on);
+  k.wrap.classList.toggle('front', on);
 }
 
 export function ringHtml(mastery) { return ringSvg(mastery); }

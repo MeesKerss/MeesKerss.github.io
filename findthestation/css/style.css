@@ -146,10 +146,12 @@ body.playing .home-link { display: none; }
 .panel-head { padding: 1.5rem 1.5rem .75rem; }
 .title { font-size: 1.7rem; font-weight: 800; letter-spacing: -.02em; }
 .sub { font-size: .85rem; color: var(--muted); margin-top: .35rem; line-height: 1.4; }
-.place-list { padding: .25rem .75rem 1rem; display: flex; flex-direction: column; gap: .25rem; }
+.place-list { padding: .25rem .75rem 1rem; display: flex; flex-direction: column; gap: .15rem; overflow-y: auto; overscroll-behavior: contain; }
+.panel-globe { max-height: calc(100vh - 88px); }
+.region-head { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: var(--faint); padding: .75rem .75rem .3rem; }
 .place-row {
   display: grid; grid-template-columns: 28px 1fr auto; grid-template-rows: auto auto; column-gap: .8rem;
-  align-items: center; text-align: left; padding: .7rem .75rem; border-radius: 14px; transition: background .13s;
+  align-items: center; text-align: left; padding: .5rem .75rem; border-radius: 14px; transition: background .13s;
 }
 .place-row:hover { background: #f7f5f2; }
 .place-row .ring { grid-row: 1 / 3; }
@@ -202,17 +204,21 @@ details.lines summary:hover { color: var(--ink); }
 details.lines .pack { margin-left: .6rem; }
 
 /* ── Place markers on the globe ─────────────── */
-.place-marker {
-  display: flex; align-items: center; gap: .4rem; padding: 3px 10px 3px 3px;
-  background: var(--card); border-radius: 50px; box-shadow: var(--shadow-sm);
-  font-weight: 800; font-size: .78rem; transition: transform .15s, box-shadow .15s;
-}
-.place-marker.anchor-left { margin: 22px 0 0 -14px; }
-.place-marker.anchor-right { flex-direction: row-reverse; padding: 3px 3px 3px 10px; margin: -22px -14px 0 0; }
-.place-marker:hover, .place-marker.hover { transform: scale(1.08); box-shadow: 0 4px 22px rgba(0, 0, 0, .16); }
-.place-marker .ring { width: 22px; height: 22px; }
-body:not([data-state="globe"]) .place-marker { visibility: hidden !important; pointer-events: none; }
 .place-marker-wrap { transition: none; }
+.place-marker-wrap.collapsed { visibility: hidden; }
+.place-marker-wrap.front { z-index: 3; visibility: visible; }
+.place-marker {
+  position: relative; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--card); box-shadow: var(--shadow-sm); transition: transform .15s, box-shadow .15s;
+}
+.place-marker .ring { width: 22px; height: 22px; }
+.place-label {
+  position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%);
+  background: var(--ink); color: #fff; font-size: .72rem; font-weight: 700; white-space: nowrap;
+  padding: .25rem .55rem; border-radius: 50px; opacity: 0; pointer-events: none; transition: opacity .12s;
+}
+.place-marker:hover, .place-marker.hover { transform: scale(1.15); box-shadow: 0 4px 22px rgba(0, 0, 0, .18); }
+.place-marker:hover .place-label, .place-marker.hover .place-label { opacity: 1; }
 body:not([data-state="globe"]) .place-marker-wrap { visibility: hidden !important; pointer-events: none; }
 
 @media (max-width: 640px) {
@@ -220,7 +226,7 @@ body:not([data-state="globe"]) .place-marker-wrap { visibility: hidden !importan
     left: 0; right: 0; bottom: 0; top: auto; width: auto; max-height: 52vh;
     border-radius: var(--radius) var(--radius) 0 0;
   }
-  .panel-globe { max-height: none; }
+  .panel-globe { max-height: 55vh; }
   .panel-head { padding: 1.2rem 1.25rem .5rem; }
   .title { font-size: 1.45rem; }
 }

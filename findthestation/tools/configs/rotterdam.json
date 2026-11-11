@@ -1,0 +1,32 @@
+{
+  "id": "rotterdam",
+  "name": "Rotterdam",
+  "kind": "city",
+  "region": "Netherlands",
+  "center": [
+    4.48,
+    51.92
+  ],
+  "zoom": 11.5,
+  "bbox": [
+    51.82,
+    4.2,
+    52.1,
+    4.62
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"~\"^(subway|tram|light_rail|bus|ferry)$\"][\"operator\"=\"RET\"]({{bbox}})",
+    "rel[\"type\"=\"route\"][\"route\"=\"train\"]({{bbox}})"
+  ],
+  "boundary": {
+    "admin_level": "8",
+    "name": "Rotterdam"
+  },
+  "stripPrefixes": [
+    "Rotterdam"
+  ],
+  "stationWords": true,
+  "aliases": {},
+  "mergeMeters": 400,
+  "unlockMin": 0.7
+}

@@ -13,13 +13,6 @@
     52.44,
     5.08
   ],
-  "operator": "GVB",
-  "cityModes": [
-    "subway",
-    "tram",
-    "bus",
-    "ferry"
-  ],
   "boundary": {
     "admin_level": "8",
     "name": "Amsterdam"
@@ -50,5 +43,9 @@
     "nameProp": "naam"
   },
   "stationWords": true,
-  "markerAnchor": "right"
+  "region": "Netherlands",
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"~\"^(subway|tram|light_rail|bus|ferry)$\"][\"operator\"=\"GVB\"]({{bbox}})",
+    "rel[\"type\"=\"route\"][\"route\"=\"train\"]({{bbox}})"
+  ]
 }

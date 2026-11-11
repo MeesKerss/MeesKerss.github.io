@@ -64,3 +64,43 @@ test('line packs below minLineStops are skipped', () => {
   assert.equal(packs.find((p) => p.id === 'amsterdam/tram-1'), undefined);
   assert.ok(packs.find((p) => p.id === 'amsterdam/tram-all'));
 });
+
+// ── Metro-only capitals and cities without districts ──
+const metroNet = (nStations, refs) => {
+  const stops = Array.from({ length: nStations }, (_, i) => ({ id: `s${i}`, name: `S${i}`, lon: i * 0.01, lat: 0, modes: ['subway'] }));
+  const per = Math.ceil(nStations / refs.length);
+  const lines = refs.map((ref, k) => ({ id: `subway-${ref.toLowerCase().replace(/\s+/g, '-')}`, ref, mode: 'subway',
+    stops: stops.slice(k * per, (k + 1) * per).map((s) => s.id), edges: [] }));
+  return { stops, lines };
+};
+
+test('big metro gets line packs and a locked all-stations pack', () => {
+  const packs = buildPacks('paris', metroNet(150, ['1', '2', '3bis', '4', '5']), {}, { kind: 'city', unlockMin: 0.7, minLineStops: 5 });
+  const lineIds = packs.filter((p) => p.kind === 'line').map((p) => p.id);
+  assert.deepEqual(lineIds, ['paris/metro-1', 'paris/metro-2', 'paris/metro-3bis', 'paris/metro-4', 'paris/metro-5']);
+  assert.equal(packs.find((p) => p.id === 'paris/metro-3bis').name, 'Line 3bis');
+  assert.deepEqual(packs.find((p) => p.id === 'paris/metro').unlock, { type: 'accuracy', min: 0.7, of: lineIds, count: 3 });
+});
+
+test('line names that are already words are kept', () => {
+  const packs = buildPacks('london', metroNet(120, ['Bakerloo line', 'Victoria line', 'U1']), {}, { kind: 'city', unlockMin: 0.7 });
+  assert.deepEqual(packs.filter((p) => p.kind === 'line').map((p) => p.name), ['Bakerloo line', 'U1', 'Victoria line']);
+});
+
+test('small metro has no line packs and stays open', () => {
+  const packs = buildPacks('lisbon', metroNet(40, ['Azul', 'Verde']), {}, { kind: 'city', unlockMin: 0.7 });
+  assert.deepEqual(packs.map((p) => p.id), ['lisbon/metro']);
+  assert.deepEqual(packs[0].unlock, { type: 'open' });
+});
+
+test('metro-only city gets no Everything pack', () => {
+  const packs = buildPacks('vienna', metroNet(100, ['U1', 'U2', 'U3']), {}, { kind: 'city', unlockMin: 0.7 });
+  assert.equal(packs.find((p) => p.id.endsWith('/everything')), undefined);
+});
+
+test('bus-all without districts unlocks via bus lines', () => {
+  const n = { stops: [s('a', 1, 1, ['bus']), s('b', 2, 1, ['bus']), s('c', 3, 1, ['bus'])],
+    lines: [{ id: 'bus-1', ref: '1', mode: 'bus', stops: ['a', 'b'], edges: [] }, { id: 'bus-2', ref: '2', mode: 'bus', stops: ['b', 'c'], edges: [] }] };
+  const packs = buildPacks('rotterdam', n, {}, { kind: 'city', unlockMin: 0.7 });
+  assert.deepEqual(packs.find((p) => p.id === 'rotterdam/bus-all').unlock, { type: 'accuracy', min: 0.7, of: ['rotterdam/bus-1', 'rotterdam/bus-2'], count: 2 });
+});

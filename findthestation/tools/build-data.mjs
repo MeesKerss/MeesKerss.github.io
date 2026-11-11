@@ -15,6 +15,8 @@ const fresh = process.argv.includes('--fresh');
 if (!placeId) { console.error('usage: build-data.mjs <place> [--fresh]'); process.exit(1); }
 const cfg = JSON.parse(await readFile(join(HERE, 'configs', `${placeId}.json`), 'utf8'));
 const MODES = ['subway', 'tram', 'bus', 'ferry', 'train'];
+// Menu order on the globe.
+const ORDER = ['amsterdam', 'rotterdam', 'netherlands', 'berlin', 'paris', 'london', 'madrid', 'vienna', 'brussels', 'prague', 'stockholm', 'lisbon', 'budapest'];
 const isTourist = (t) => t.historic || t['railway:preserved'] || t.tourism || /^(tourist|tourism|heritage)$/.test(t.service || '');
 
 async function fetchGeoJSON(url, cacheKey) {
@@ -35,33 +37,41 @@ function ringCentroid(ring) {
 
 async function buildCity() {
   const bb = cfg.bbox.join(',');
-  const bsel = `rel["boundary"="administrative"]["admin_level"="${cfg.boundary.admin_level}"]["name"="${cfg.boundary.name}"]`;
-  const bEls = await overpass(`[out:json][timeout:120];${bsel};out geom;`, `${placeId}-boundary`, { fresh });
-  const boundary = relationPolygons(bEls.find((e) => e.type === 'relation'));
+  let boundary = null;
+  if (cfg.boundary) {
+    const bsel = `rel["boundary"="administrative"]["admin_level"="${cfg.boundary.admin_level}"]["name"="${cfg.boundary.name}"]`;
+    const bEls = await overpass(`[out:json][timeout:120];${bsel}(${bb});out geom;`, `${placeId}-boundary`, { fresh });
+    boundary = relationPolygons(bEls.find((e) => e.type === 'relation'));
+  }
 
   const areas = {};
-  for (const f of await fetchGeoJSON(cfg.areasGeoJSON.url, `${placeId}-areas`)) {
-    if (f.properties.eindGeldigheid) continue;
-    const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
-    const raw = f.properties[cfg.areasGeoJSON.nameProp];
-    const name = cfg.areaMerge?.[raw] ?? raw;
-    areas[name] = (areas[name] || []).concat(polys);
+  if (cfg.areasGeoJSON) {
+    for (const f of await fetchGeoJSON(cfg.areasGeoJSON.url, `${placeId}-areas`)) {
+      if (f.properties.eindGeldigheid) continue;
+      const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+      const raw = f.properties[cfg.areasGeoJSON.nameProp];
+      const name = cfg.areaMerge?.[raw] ?? raw;
+      areas[name] = (areas[name] || []).concat(polys);
+    }
+    console.log(`  areas: ${Object.keys(areas).join(', ')}`);
   }
-  console.log(`  areas: ${Object.keys(areas).join(', ')}`);
 
-  const routeQ = `[out:json][timeout:300];(
-    rel["type"="route"]["route"~"^(subway|tram|light_rail|bus|ferry)$"]["operator"="${cfg.operator}"](${bb});
-    rel["type"="route"]["route"="train"](${bb});)->.r;
-    .r out geom(${bb});node(r.r);out tags;way(r.r)["public_transport"="platform"];out tags;`;
+  const selectors = cfg.routes.map((r) => r.replaceAll('{{bbox}}', bb) + ';').join('');
+  const routeQ = `[out:json][timeout:300];(${selectors})->.r;.r out geom(${bb});node(r.r);out tags;way(r.r)["public_transport"="platform"];out tags;`;
   const els = (await overpass(routeQ, `${placeId}-routes`, { fresh })).filter((e) => e.type !== 'relation' || !isTourist(e.tags || {}));
-  const net = buildNetwork(els, { modes: MODES, stripPrefixes: cfg.stripPrefixes, aliases: cfg.aliases, stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters, tolerance: cfg.tolerance });
+  const net = buildNetwork(els, {
+    modes: MODES, stripPrefixes: cfg.stripPrefixes || [], stripSuffixes: cfg.stripSuffixes || [], aliases: cfg.aliases || {},
+    stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters ?? 300, tolerance: cfg.tolerance ?? 0.00004,
+  });
 
-  // Stop inclusion: inside the boundary, or a metro/tram stop on a line that enters the city.
-  const inside = new Set(net.stops.filter((s) => pointInMultiPolygon([s.lon, s.lat], boundary)).map((s) => s.id));
-  const enteringRail = new Set();
-  for (const l of net.lines) if ((l.mode === 'subway' || l.mode === 'tram') && l.stops.some((id) => inside.has(id))) l.stops.forEach((id) => enteringRail.add(`${l.mode}|${id}`));
-  for (const s of net.stops) {
-    if (!inside.has(s.id)) s.modes = s.modes.filter((m) => enteringRail.has(`${m}|${s.id}`));
+  if (boundary) {
+    // Stop inclusion: inside the boundary, or a metro/tram stop on a line that enters the city.
+    const inside = new Set(net.stops.filter((s) => pointInMultiPolygon([s.lon, s.lat], boundary)).map((s) => s.id));
+    const enteringRail = new Set();
+    for (const l of net.lines) if ((l.mode === 'subway' || l.mode === 'tram') && l.stops.some((id) => inside.has(id))) l.stops.forEach((id) => enteringRail.add(`${l.mode}|${id}`));
+    for (const s of net.stops) {
+      if (!inside.has(s.id)) s.modes = s.modes.filter((m) => enteringRail.has(`${m}|${s.id}`));
+    }
   }
   return { net, areas };
 }
@@ -107,7 +117,7 @@ const lines = net.lines.map((l) => ({
   edges: l.edges.filter(([a, b]) => okFor(a, l.mode) && okFor(b, l.mode)),
 })).filter((l) => l.stops.length);
 
-const packs = buildPacks(placeId, { stops, lines }, areas, { kind: cfg.kind, unlockMin: cfg.unlockMin, minLineStops: cfg.minLineStops ?? 5, intercityStops: built.intercityStops });
+const packs = buildPacks(placeId, { stops, lines }, areas, { kind: cfg.kind, unlockMin: cfg.unlockMin ?? 0.7, minLineStops: cfg.minLineStops ?? 5, intercityStops: built.intercityStops });
 
 const out = join(DATA, placeId);
 await mkdir(out, { recursive: true });
@@ -124,8 +134,9 @@ const placesFile = join(DATA, 'places.json');
 let places = { places: [] };
 try { places = JSON.parse(await readFile(placesFile, 'utf8')); } catch { /* new */ }
 const entry = { id: placeId, name: cfg.name, center: cfg.center, zoom: cfg.zoom,
-  bounds: [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], data: placeId, stopCount: stops.length, markerAnchor: cfg.markerAnchor || 'bottom' };
-places.places = places.places.filter((p) => p.id !== placeId).concat(entry);
+  bounds: [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], data: placeId, stopCount: stops.length, region: cfg.region || 'Other' };
+places.places = places.places.filter((p) => p.id !== placeId).concat(entry)
+  .sort((a, b) => (ORDER.indexOf(a.id) + 1 || 99) - (ORDER.indexOf(b.id) + 1 || 99));
 await writeFile(placesFile, JSON.stringify(places, null, 2));
 
 const byMode = Object.fromEntries(MODES.map((m) => [m, stops.filter((s) => s.modes.includes(m)).length]));

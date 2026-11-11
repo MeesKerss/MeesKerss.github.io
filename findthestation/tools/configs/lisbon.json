@@ -1,0 +1,25 @@
+{
+  "id": "lisbon",
+  "name": "Lisbon",
+  "kind": "city",
+  "region": "Europe",
+  "center": [
+    -9.14,
+    38.72
+  ],
+  "zoom": 11,
+  "bbox": [
+    38.68,
+    -9.25,
+    38.82,
+    -9.05
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {},
+  "mergeMeters": 350,
+  "unlockMin": 0.7
+}

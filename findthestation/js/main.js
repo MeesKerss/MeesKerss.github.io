@@ -7,8 +7,8 @@ import { createRun, currentTarget, guess, advance, summary, MAX_TRIES } from './
 import { nearestStop } from './hit.js';
 import { sfx, unlockAudio, isMuted, setMuted } from './sound.js';
 import {
-  loadProgress, saveProgress, recordRun, isUnlocked, canHardMode, placeMastery,
-  saveResume, getResume, clearResume, RESUME_MIN_STOPS,
+  loadProgress, saveProgress, recordRun, isUnlocked, canHardMode,
+  saveResume, getResume, clearResume, RESUME_MIN_STOPS, placeMasteryFromProgress,
 } from './progress.js';
 
 const app = {
@@ -39,13 +39,8 @@ function playPadding() {
   return isMobile() ? { top: 170, bottom: 60, left: 24, right: 24 } : { top: 150, bottom: 50, left: 40, right: 40 };
 }
 
-async function masteryById() {
-  const out = {};
-  for (const p of app.places) {
-    const data = await loadPlace(p.data);
-    out[p.id] = placeMastery(app.progress, data.packs, data.stops.length);
-  }
-  return out;
+function masteryById() {
+  return Object.fromEntries(app.places.map((p) => [p.id, placeMasteryFromProgress(app.progress, p.id, p.stopCount)]));
 }
 
 // ── Globe ───────────────────────────────────────────────
@@ -57,7 +52,7 @@ async function goGlobe() {
   ui.hidePrompt(); ui.hideEnd(); ui.setStreak(0);
   setState('globe');
   ui.showPlaceMenu({
-    places: app.places, masteryById: await masteryById(), ringHtml: M.ringHtml,
+    places: app.places, masteryById: masteryById(), ringHtml: M.ringHtml,
     onSelect: (p) => goPlace(p), onHover: M.highlightPlaceMarker,
   });
   if (app.place) sfx.whoosh(2.2);
@@ -76,7 +71,7 @@ async function goPlace(place, { fly = true } = {}) {
   const dataP = loadPlace(place.data);
   if (fly) {
     ui.hidePanel();
-    sfx.whoosh(from ? 2.4 : 2.0);
+    sfx.whoosh(from ? 2.8 : 2.0);
     const flight = M.flyToPlace(app.map, place, { fromPlace: from, padding: placePadding() });
     await Promise.race([flight, new Promise((r) => setTimeout(r, MENU_DELAY_MS))]);
     if (app.place !== place || app.state !== 'place') return;
@@ -207,7 +202,7 @@ async function finishPack() {
   recordRun(app.progress, pack.id, s, firstTry);
   clearResume(app.progress, pack.id);
   saveProgress(app.progress);
-  const mastery = await masteryById();
+  const mastery = masteryById();
   for (const [id, m] of Object.entries(mastery)) M.updatePlaceMarker(id, m);
 
   app.run = null;
@@ -250,7 +245,7 @@ async function boot() {
   document.addEventListener('pointerdown', unlockAudio, true);
   ui.bindSoundButton(isMuted(), (muted) => { setMuted(muted); if (!muted) { unlockAudio(); sfx.tap(); } });
   app.places = await loadPlaces();
-  M.addPlaceMarkers(map, app.places, await masteryById(), (p) => {
+  M.addPlaceMarkers(map, app.places, masteryById(), (p) => {
     if (app.state === 'globe' || app.state === 'place') goPlace(p);
   });
   M.bindSpinPause(map, () => app.state === 'globe');

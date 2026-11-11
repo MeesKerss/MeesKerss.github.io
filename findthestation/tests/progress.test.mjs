@@ -67,3 +67,13 @@ test('stale resume is discarded', () => {
   assert.equal(getResume(p, 'x', { a: {} }), null);
   assert.equal(RESUME_MIN_STOPS, 50);
 });
+
+import { placeMasteryFromProgress } from '../js/progress.js';
+test('place mastery from progress alone (no pack data needed)', () => {
+  let p = recordRun(empty(), 'paris/metro-1', { score: 0, accuracy: 0, bestStreak: 0 }, ['a', 'b']);
+  p = recordRun(p, 'paris/metro', { score: 0, accuracy: 0, bestStreak: 0 }, ['b', 'c']);
+  p = recordRun(p, 'parisx/metro', { score: 0, accuracy: 0, bestStreak: 0 }, ['z']);
+  assert.equal(placeMasteryFromProgress(p, 'paris', 10), 0.3);
+  assert.equal(placeMasteryFromProgress(p, 'berlin', 10), 0);
+  assert.equal(placeMasteryFromProgress(p, 'paris', 0), 0);
+});
