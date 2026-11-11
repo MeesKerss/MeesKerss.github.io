@@ -203,7 +203,8 @@ details.lines .pack { margin-left: .6rem; }
 .place-marker:hover, .place-marker.hover { transform: scale(1.08); box-shadow: 0 4px 22px rgba(0, 0, 0, .16); }
 .place-marker .ring { width: 22px; height: 22px; }
 body:not([data-state="globe"]) .place-marker { visibility: hidden !important; pointer-events: none; }
-.maplibregl-marker:has(.place-marker) { transition: opacity .3s; }
+.place-marker-wrap { transition: none; }
+body:not([data-state="globe"]) .place-marker-wrap { visibility: hidden !important; pointer-events: none; }
 
 @media (max-width: 640px) {
   .panel, .panel-globe {

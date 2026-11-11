@@ -1,4 +1,5 @@
 // One MapLibre map for globe and city. `maplibregl` is the global from the CDN script.
+import { spinSpeed } from './spin.js';
 const ml = () => globalThis.maplibregl;
 
 export const reducedMotion = () => {
@@ -25,13 +26,13 @@ export function createMap(container) {
 
 // ── Globe + flights ─────────────────────────────────────
 let spin = { on: false, raf: 0, last: 0, idleTimer: 0, gen: 0 };
-const SPIN_DEG_PER_SEC = 0.6;
 
 function spinFrame(map, t) {
   if (!spin.on) return;
-  if (spin.last) {
+  const speed = spinSpeed(map.getZoom());
+  if (spin.last && speed > 0 && !map.isMoving()) {
     const c = map.getCenter();
-    map.jumpTo({ center: [c.lng + (SPIN_DEG_PER_SEC * (t - spin.last)) / 1000, c.lat] });
+    map.jumpTo({ center: [c.lng + (speed * (t - spin.last)) / 1000, c.lat] });
   }
   spin.last = t;
   spin.raf = requestAnimationFrame((tt) => spinFrame(map, tt));
@@ -128,12 +129,17 @@ function ringSvg(mastery) {
 
 export function addPlaceMarkers(map, places, masteryById, onSelect) {
   for (const p of places) {
+    // MapLibre positions the wrapper with a transform; the inner chip owns hover effects.
+    const wrap = document.createElement('div');
+    wrap.className = 'place-marker-wrap';
     const el = document.createElement('button');
     el.className = `place-marker anchor-${p.markerAnchor || 'bottom'}`;
     el.setAttribute('aria-label', p.name);
-    el.innerHTML = `${ringSvg(masteryById[p.id] || 0)}<span>${p.name}</span>`;
+    el.innerHTML = `${ringSvg(masteryById[p.id] || 0)}<span></span>`;
+    el.querySelector('span').textContent = p.name;
     el.addEventListener('click', (e) => { e.stopPropagation(); onSelect(p); });
-    const m = new (ml().Marker)({ element: el, anchor: p.markerAnchor || 'bottom' }).setLngLat(p.center).addTo(map);
+    wrap.appendChild(el);
+    const m = new (ml().Marker)({ element: wrap, anchor: p.markerAnchor || 'bottom' }).setLngLat(p.center).addTo(map);
     markers.set(p.id, { m, el });
   }
 }
