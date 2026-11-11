@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildNetwork, cleanName, slugify } from '../tools/osm.mjs';
+import { buildNetwork, cleanName, slugify, disambiguateNames } from '../tools/osm.mjs';
 
 const node = (id, name, lat, lon) => ({ type: 'node', id, lat, lon, tags: { name } });
 const stopM = (ref, lat, lon, role = 'stop') => ({ type: 'node', ref, role, lat, lon });
@@ -129,4 +129,22 @@ test('cleanName unifies dash and apostrophe variants', () => {
   assert.equal(cleanName('Reuilly — Diderot'), 'Reuilly - Diderot');
   assert.equal(cleanName('Reuilly – Diderot'), 'Reuilly - Diderot');
   assert.equal(cleanName('Regent’s Park'), "Regent's Park");
+});
+
+test('nameTags picks the first available name tag (e.g. name:en for Tokyo)', () => {
+  const els = [
+    { type: 'node', id: 1, lat: 35.68, lon: 139.76, tags: { name: '東京', 'name:en': 'Tokyo' } },
+    { type: 'node', id: 2, lat: 35.69, lon: 139.70, tags: { name: '新宿' } },
+    { type: 'relation', id: 1, tags: { route: 'subway', ref: 'M' }, members: [stopM(1, 35.68, 139.76), stopM(2, 35.69, 139.70)] }];
+  const { stops } = buildNetwork(els, { ...opts, nameTags: ['name:en', 'name'] });
+  assert.deepEqual(stops.map((s) => s.name).sort(), ['Tokyo', '新宿']);
+});
+
+test('disambiguateNames suffixes colliding names with the lines serving them', () => {
+  const net = {
+    stops: [{ id: 'a', name: '86th Street' }, { id: 'b', name: '86th Street' }, { id: 'c', name: 'Canal Street' }],
+    lines: [{ ref: 'Q', stops: ['a'] }, { ref: '6', stops: ['b', 'c'] }, { ref: '4', stops: ['b'] }, { ref: '<6>', stops: ['b'] }],
+  };
+  disambiguateNames(net);
+  assert.deepEqual(net.stops.map((s) => s.name), ['86th Street (Q)', '86th Street (4/6)', 'Canal Street']);
 });

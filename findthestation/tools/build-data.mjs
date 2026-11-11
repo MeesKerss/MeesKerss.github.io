@@ -4,7 +4,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { overpass } from './overpass.mjs';
-import { buildNetwork, relationPolygons } from './osm.mjs';
+import { buildNetwork, relationPolygons, disambiguateNames } from './osm.mjs';
 import { buildPacks } from './packs.mjs';
 import { pointInMultiPolygon } from '../js/geo.js';
 
@@ -16,7 +16,7 @@ if (!placeId) { console.error('usage: build-data.mjs <place> [--fresh]'); proces
 const cfg = JSON.parse(await readFile(join(HERE, 'configs', `${placeId}.json`), 'utf8'));
 const MODES = ['subway', 'tram', 'bus', 'ferry', 'train'];
 // Menu order on the globe.
-const ORDER = ['amsterdam', 'rotterdam', 'netherlands', 'berlin', 'paris', 'london', 'madrid', 'vienna', 'brussels', 'prague', 'stockholm', 'lisbon', 'budapest'];
+const ORDER = ['amsterdam', 'rotterdam', 'netherlands', 'berlin', 'hamburg', 'munich', 'frankfurt', 'nuremberg', 'paris', 'london', 'madrid', 'vienna', 'brussels', 'prague', 'stockholm', 'lisbon', 'budapest', 'new-york', 'tokyo'];
 const isTourist = (t) => t.historic || t['railway:preserved'] || t.tourism || /^(tourist|tourism|heritage)$/.test(t.service || '');
 
 async function fetchGeoJSON(url, cacheKey) {
@@ -61,8 +61,9 @@ async function buildCity() {
   const els = (await overpass(routeQ, `${placeId}-routes`, { fresh })).filter((e) => e.type !== 'relation' || !isTourist(e.tags || {}));
   const net = buildNetwork(els, {
     modes: MODES, stripPrefixes: cfg.stripPrefixes || [], stripSuffixes: cfg.stripSuffixes || [], aliases: cfg.aliases || {},
-    stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters ?? 300, tolerance: cfg.tolerance ?? 0.00004,
+    nameTags: cfg.nameTags || ['name'], stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters ?? 300, tolerance: cfg.tolerance ?? 0.00004,
   });
+  if (cfg.disambiguate) disambiguateNames(net);
 
   if (boundary) {
     // Stop inclusion: inside the boundary, or a metro/tram stop on a line that enters the city.
@@ -86,7 +87,7 @@ async function buildRail() {
 
   const routeQ = `[out:json][timeout:600];${nl}rel["type"="route"]["route"="train"](area.nl)->.r;.r out geom;node(r.r);out tags;way(r.r)["public_transport"="platform"];out tags;`;
   const els = (await overpass(routeQ, `${placeId}-routes`, { fresh })).filter((e) => e.type !== 'relation' || !isTourist(e.tags || {}));
-  const net = buildNetwork(els, { modes: ['train'], stripPrefixes: cfg.stripPrefixes, aliases: cfg.aliases, stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters, tolerance: cfg.tolerance });
+  const net = buildNetwork(els, { modes: ['train'], stripPrefixes: cfg.stripPrefixes, aliases: cfg.aliases, nameTags: cfg.nameTags || ['name'], stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters, tolerance: cfg.tolerance });
   for (const s of net.stops) if (!pointInMultiPolygon([s.lon, s.lat], allPolys)) s.modes = [];
 
   // Intercity: stops served by long-distance relations.
@@ -95,7 +96,7 @@ async function buildRail() {
     && ((cfg.intercityServices || ['long_distance']).includes(e.tags?.service) || /intercity/i.test(e.tags?.name || ''))
     && !(excl && excl.test(e.tags?.name || ''))
     && (!cfg.intercityOperators || new RegExp(cfg.intercityOperators).test(e.tags?.operator || '')));
-  const icNet = buildNetwork(icRels.concat(els.filter((e) => e.type !== 'relation')), { modes: ['train'], stripPrefixes: cfg.stripPrefixes, aliases: cfg.aliases, stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters, tolerance: cfg.tolerance });
+  const icNet = buildNetwork(icRels.concat(els.filter((e) => e.type !== 'relation')), { modes: ['train'], stripPrefixes: cfg.stripPrefixes, aliases: cfg.aliases, nameTags: cfg.nameTags || ['name'], stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters, tolerance: cfg.tolerance });
   // OSM route data has a few known gaps/errors; config lists correct them by station name.
   const icNames = new Set(icNet.stops.map((s) => s.name).concat(cfg.intercityIncludeStations || []));
   for (const n of cfg.intercityExcludeStations || []) icNames.delete(n);
@@ -117,7 +118,7 @@ const lines = net.lines.map((l) => ({
   edges: l.edges.filter(([a, b]) => okFor(a, l.mode) && okFor(b, l.mode)),
 })).filter((l) => l.stops.length);
 
-const packs = buildPacks(placeId, { stops, lines }, areas, { kind: cfg.kind, unlockMin: cfg.unlockMin ?? 0.7, minLineStops: cfg.minLineStops ?? 5, intercityStops: built.intercityStops });
+const packs = buildPacks(placeId, { stops, lines }, areas, { kind: cfg.kind, unlockMin: cfg.unlockMin ?? 0.7, minLineStops: cfg.minLineStops ?? 5, intercityStops: built.intercityStops, lineNames: cfg.lineNames });
 
 const out = join(DATA, placeId);
 await mkdir(out, { recursive: true });

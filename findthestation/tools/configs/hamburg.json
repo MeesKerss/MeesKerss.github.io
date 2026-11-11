@@ -1,0 +1,7 @@
+{
+  "id": "hamburg", "name": "Hamburg", "kind": "city", "region": "Europe",
+  "center": [10.0, 53.56], "zoom": 11, "bbox": [53.38, 9.70, 53.78, 10.35],
+  "routes": ["rel[\"type\"=\"route\"][\"route\"=\"subway\"]({{bbox}})"],
+  "stripPrefixes": [], "stripSuffixes": [], "aliases": {},
+  "mergeMeters": 350, "unlockMin": 0.7
+}

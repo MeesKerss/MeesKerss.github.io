@@ -4,7 +4,7 @@ import { slugify } from './osm.mjs';
 
 const naturalRef = (a, b) => String(a.ref).localeCompare(String(b.ref), 'en', { numeric: true });
 // "4" / "3bis" -> "Line 4"; names that are already words ("U1", "Bakerloo line") stay as they are.
-const metroLineName = (ref) => (/^\d+[a-z]*$/i.test(String(ref)) ? `Line ${ref}` : String(ref));
+const metroLineName = (ref) => (/^(\d+[a-z]*|[A-Z])$/.test(String(ref)) ? `Line ${ref}` : String(ref));
 
 export function buildPacks(placeId, network, areas, config) {
   const min = config.unlockMin ?? 0.7;
@@ -48,7 +48,7 @@ export function buildPacks(placeId, network, areas, config) {
   const metroStops = stopsOfMode('subway');
   const metroLinePacks = metroStops.length >= (config.metroLinePacksMin ?? 60)
     ? lines.filter((l) => l.mode === 'subway' && l.stops.length >= minLine).sort(naturalRef)
-      .map((l) => mk(`metro-${slugify(l.ref)}`, metroLineName(l.ref), 'subway', 'Metro', l.stops.slice(), open, { focusLines: [l.id], kind: 'line' }))
+      .map((l) => mk(`metro-${slugify(l.ref)}`, config.lineNames?.[l.ref] ?? metroLineName(l.ref), 'subway', 'Metro', l.stops.slice(), open, { focusLines: [l.id], kind: 'line' }))
       .filter(Boolean)
     : [];
   const metroLocked = metroStops.length > (config.metroLockAbove ?? 100) && metroLinePacks.length;

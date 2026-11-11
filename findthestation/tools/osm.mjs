@@ -44,8 +44,9 @@ function memberPoint(m) {
 }
 
 export function buildNetwork(elements, opts) {
-  const { modes, stripPrefixes = [], aliases = {}, mergeMeters = 300, tolerance = 0.00005, stationWords = false, stripSuffixes = [] } = opts;
+  const { modes, stripPrefixes = [], aliases = {}, mergeMeters = 300, tolerance = 0.00005, stationWords = false, stripSuffixes = [], nameTags = ['name'] } = opts;
   const tags = new Map();
+  const nameOf = (m) => { const t = tags.get(`${m.type}/${m.ref}`); return t && nameTags.map((k) => t[k]).find(Boolean); };
   for (const el of elements) if (el.type !== 'relation' && el.tags) tags.set(`${el.type}/${el.id}`, el.tags);
 
   const clusters = []; // { name, first:[lon,lat], sumLon, sumLat, n, modes:Set }
@@ -70,12 +71,12 @@ export function buildNetwork(elements, opts) {
     if (!mode || !modes.includes(mode)) continue;
     const members = rel.members || [];
     let stopMembers = members.filter((m) => STOP_ROLE.test(m.role || ''));
-    if (!stopMembers.some((m) => tags.get(`${m.type}/${m.ref}`)?.name)) {
+    if (!stopMembers.some((m) => nameOf(m))) {
       stopMembers = members.filter((m) => PLATFORM_ROLE.test(m.role || ''));
     }
     const seq = [];
     for (const m of stopMembers) {
-      const raw = tags.get(`${m.type}/${m.ref}`)?.name;
+      const raw = nameOf(m);
       const pt = memberPoint(m);
       if (!raw || !pt) continue;
       const c = clusterFor(cleanName(raw, stripPrefixes, aliases, { stationWords, stripSuffixes }), pt, mode);
@@ -202,4 +203,20 @@ export function chainLines(parts) {
     chains.push(chain);
   }
   return chains;
+}
+
+// Stations sharing a name (NYC has seven "86th Street"s) get their lines appended, MTA-style: "86th Street (4/5/6)".
+export function disambiguateNames(net) {
+  const count = new Map();
+  for (const s of net.stops) count.set(s.name, (count.get(s.name) || 0) + 1);
+  const refs = new Map();
+  for (const l of net.lines) {
+    const r = String(l.ref).replace(/[<>]/g, '');
+    for (const id of l.stops) (refs.get(id) || refs.set(id, new Set()).get(id)).add(r);
+  }
+  const order = (a, b) => a.localeCompare(b, 'en', { numeric: true });
+  for (const s of net.stops) {
+    if (count.get(s.name) > 1 && refs.get(s.id)?.size) s.name = `${s.name} (${[...refs.get(s.id)].sort(order).join('/')})`;
+  }
+  return net;
 }

@@ -104,3 +104,8 @@ test('bus-all without districts unlocks via bus lines', () => {
   const packs = buildPacks('rotterdam', n, {}, { kind: 'city', unlockMin: 0.7 });
   assert.deepEqual(packs.find((p) => p.id === 'rotterdam/bus-all').unlock, { type: 'accuracy', min: 0.7, of: ['rotterdam/bus-1', 'rotterdam/bus-2'], count: 2 });
 });
+
+test('single-letter refs read "Line A"; config lineNames override', () => {
+  const packs = buildPacks('tokyo', metroNet(120, ['A', 'G', 'M']), {}, { kind: 'city', unlockMin: 0.7, lineNames: { G: 'Ginza Line' } });
+  assert.deepEqual(packs.filter((p) => p.kind === 'line').map((p) => p.name), ['Line A', 'Ginza Line', 'Line M']);
+});

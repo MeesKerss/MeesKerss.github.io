@@ -1,0 +1,52 @@
+{
+  "id": "tokyo",
+  "name": "Tokyo",
+  "kind": "city",
+  "region": "Asia",
+  "center": [
+    139.74,
+    35.69
+  ],
+  "zoom": 11,
+  "bbox": [
+    35.5,
+    139.4,
+    35.85,
+    139.95
+  ],
+  "routes": [
+    "rel[\"type\"=\"route\"][\"route\"=\"subway\"][\"network\"~\"^(東京メトロ|都営地下鉄)$\"][\"ref\"!=\"Al\"]({{bbox}})"
+  ],
+  "stripPrefixes": [],
+  "stripSuffixes": [],
+  "aliases": {
+    "池袋": "Ikebukuro",
+    "明治神宮前〈原宿〉": "Meiji-jingumae (Harajuku)",
+    "新高島平": "Shin-takashimadaira",
+    "茅場町": "Kayabacho",
+    "木場": "Kiba",
+    "南千住": "Minami-senju",
+    "Meiji-jingumae 'Harajuku'": "Meiji-jingumae (Harajuku)"
+  },
+  "mergeMeters": 600,
+  "unlockMin": 0.7,
+  "nameTags": [
+    "name:en",
+    "name"
+  ],
+  "lineNames": {
+    "G": "Ginza Line",
+    "M": "Marunouchi Line",
+    "H": "Hibiya Line",
+    "T": "Tozai Line",
+    "C": "Chiyoda Line",
+    "Y": "Yurakucho Line",
+    "Z": "Hanzomon Line",
+    "N": "Namboku Line",
+    "F": "Fukutoshin Line",
+    "A": "Asakusa Line",
+    "I": "Mita Line",
+    "S": "Shinjuku Line",
+    "E": "Oedo Line"
+  }
+}
