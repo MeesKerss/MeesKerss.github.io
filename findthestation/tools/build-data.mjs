@@ -116,7 +116,7 @@ const placesFile = join(DATA, 'places.json');
 let places = { places: [] };
 try { places = JSON.parse(await readFile(placesFile, 'utf8')); } catch { /* new */ }
 const entry = { id: placeId, name: cfg.name, center: cfg.center, zoom: cfg.zoom,
-  bounds: [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], data: placeId, stopCount: stops.length };
+  bounds: [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], data: placeId, stopCount: stops.length, markerAnchor: cfg.markerAnchor || 'bottom' };
 places.places = places.places.filter((p) => p.id !== placeId).concat(entry);
 await writeFile(placesFile, JSON.stringify(places, null, 2));
 

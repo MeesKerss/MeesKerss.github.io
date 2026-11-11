@@ -49,5 +49,6 @@
     "url": "https://api.data.amsterdam.nl/v1/gebieden/stadsdelen/?_format=geojson&_pageSize=50",
     "nameProp": "naam"
   },
-  "stationWords": true
+  "stationWords": true,
+  "markerAnchor": "right"
 }

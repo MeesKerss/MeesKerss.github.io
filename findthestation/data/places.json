@@ -19,7 +19,8 @@
         ]
       ],
       "data": "amsterdam",
-      "stopCount": 531
+      "stopCount": 531,
+      "markerAnchor": "right"
     },
     {
       "id": "netherlands",
@@ -40,7 +41,8 @@
         ]
       ],
       "data": "netherlands",
-      "stopCount": 398
+      "stopCount": 398,
+      "markerAnchor": "left"
     }
   ]
 }

@@ -11,7 +11,7 @@ const SRC_S = 'fts-stops';
 let tagTimers = [];
 let pulse = null;
 
-export function showPack(map, placeData, pack, { hard = false, mastered = [] } = {}) {
+export function showPack(map, placeData, pack, { hard = false, mastered = [], preview = false } = {}) {
   clearPack(map);
   const focus = new Set(pack.focusLines || []);
   const lineFeatures = pack.lines.map((id) => placeData.linesById[id]).filter(Boolean).map((l) => ({
@@ -34,7 +34,7 @@ export function showPack(map, placeData, pack, { hard = false, mastered = [] } =
     id: SRC_L, type: 'line', source: SRC_L,
     layout: { 'line-join': 'round', 'line-cap': 'round', visibility: hard ? 'none' : 'visible' },
     paint: {
-      'line-color': ['case', hl, ['get', 'colour'], ['get', 'focus'], focus.size ? COLORS.lineFocus : COLORS.line, COLORS.line],
+      'line-color': ['case', hl, ['get', 'colour'], ['get', 'focus'], preview ? ['get', 'colour'] : focus.size ? COLORS.lineFocus : COLORS.line, COLORS.line],
       'line-width': ['interpolate', ['linear'], ['zoom'], 6, ['case', hl, 2.5, 1], 12, ['case', hl, 5, ['get', 'focus'], 2.5, 1.5], 16, ['case', hl, 7, 4]],
       'line-opacity': ['case', hl, 1, ['get', 'focus'], 0.9, 0.3],
     },
