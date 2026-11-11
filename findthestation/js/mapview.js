@@ -88,8 +88,13 @@ export function placeCamera(map, place, padding) {
   return { center: cam.center, zoom: Math.min(cam.zoom, 15) };
 }
 
+// Each new flight (or cancelFlight) bumps the generation, so an older multi-stage flight stops early.
+let flightGen = 0;
+export function cancelFlight() { flightGen++; }
+
 export async function flyToPlace(map, place, { fromPlace = null, padding } = {}) {
   stopSpin();
+  const gen = ++flightGen;
   const target = placeCamera(map, place, padding);
   if (reducedMotion()) return fadeJump(map, target);
   if (fromPlace) {
@@ -97,11 +102,12 @@ export async function flyToPlace(map, place, { fromPlace = null, padding } = {})
     const b = place.center;
     const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
     const z = Math.max(1.5, Math.min(map.getZoom(), target.zoom) - 3);
-    map.flyTo({ center: mid, zoom: z, duration: 1100, curve: 1.2, essential: true });
+    map.flyTo({ center: mid, zoom: z, duration: 1000, curve: 1.2, essential: true });
     await once(map, 'moveend');
-    map.flyTo({ ...target, duration: 1500, curve: 1.4, essential: true });
+    if (gen !== flightGen) return;
+    map.flyTo({ ...target, duration: 1400, curve: 1.4, essential: true });
   } else {
-    map.flyTo({ ...target, duration: 2600, curve: 1.6, essential: true });
+    map.flyTo({ ...target, duration: 2000, curve: 1.6, essential: true });
   }
   await once(map, 'moveend');
 }

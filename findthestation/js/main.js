@@ -15,7 +15,6 @@ const app = {
   pack: null, run: null, graph: null, hard: false,
   busy: false, timer: null, lastPointer: 'mouse',
   progress: loadProgress(),
-  flying: false,
 };
 globalThis.__fts = app; // debugging/automation handle
 
@@ -51,6 +50,7 @@ async function masteryById() {
 // ── Globe ───────────────────────────────────────────────
 async function goGlobe() {
   clearTimeout(app.timer);
+  M.cancelFlight();
   app.run = null;
   L.clearPack(app.map);
   ui.hidePrompt(); ui.hideEnd(); ui.setStreak(0);
@@ -63,8 +63,9 @@ async function goGlobe() {
 }
 
 // ── Place / pack picker ─────────────────────────────────
+const MENU_DELAY_MS = 700; // the pack menu slides in while the camera is still arriving
+
 async function goPlace(place, { fly = true } = {}) {
-  if (app.flying) return;
   const from = app.state === 'place' && app.place && app.place.id !== place.id ? app.place : null;
   app.place = place;
   setState('place');
@@ -72,9 +73,9 @@ async function goPlace(place, { fly = true } = {}) {
   ui.hidePrompt(); ui.hideEnd(); ui.setStreak(0);
   const dataP = loadPlace(place.data);
   if (fly) {
-    app.flying = true;
     ui.hidePanel();
-    try { await M.flyToPlace(app.map, place, { fromPlace: from, padding: placePadding() }); } finally { app.flying = false; }
+    const flight = M.flyToPlace(app.map, place, { fromPlace: from, padding: placePadding() });
+    await Promise.race([flight, new Promise((r) => setTimeout(r, MENU_DELAY_MS))]);
     if (app.place !== place || app.state !== 'place') return;
   }
   app.data = await dataP;
@@ -96,6 +97,7 @@ function renderPicker() {
 }
 
 function previewPack(pack) {
+  M.cancelFlight();
   L.showPack(app.map, app.data, pack, { preview: true, mastered: app.progress.packs[pack.id]?.mastered || [] });
   app.map.fitBounds(L.packBounds(app.data, pack), { padding: placePadding(), duration: M.reducedMotion() ? 0 : 700, maxZoom: 14 });
 }
@@ -115,6 +117,7 @@ async function startPack(place, packId, { hard = false, resume = false } = {}) {
   app.run = run || Object.assign(createRun({ stops: app.pack.stops.map((id) => app.data.stopsById[id]) }), { hard });
   app.hard = hard;
   setState('play');
+  M.cancelFlight();
   ui.hidePanel(); ui.hideEnd();
   L.showPack(app.map, app.data, app.pack, { hard });
   app.map.fitBounds(L.packBounds(app.data, app.pack), { padding: playPadding(), duration: M.reducedMotion() ? 0 : 900, maxZoom: 14.5 });
