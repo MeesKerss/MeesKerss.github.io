@@ -18,6 +18,7 @@ export function createMap(container) {
     maxPitch: 0,
   });
   map.touchZoomRotate.disableRotation();
+  map.doubleClickZoom.disable(); // quick successive guesses must not zoom the map
   map.addControl(new (ml().AttributionControl)({ compact: true }), 'bottom-right');
   return new Promise((resolve) => map.once('load', () => resolve(map)));
 }
