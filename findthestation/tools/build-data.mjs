@@ -83,9 +83,14 @@ async function buildRail() {
   const excl = cfg.intercityExcludeName ? new RegExp(cfg.intercityExcludeName) : null;
   const icRels = els.filter((e) => e.type === 'relation'
     && ((cfg.intercityServices || ['long_distance']).includes(e.tags?.service) || /intercity/i.test(e.tags?.name || ''))
-    && !(excl && excl.test(e.tags?.name || '')));
+    && !(excl && excl.test(e.tags?.name || ''))
+    && (!cfg.intercityOperators || new RegExp(cfg.intercityOperators).test(e.tags?.operator || '')));
   const icNet = buildNetwork(icRels.concat(els.filter((e) => e.type !== 'relation')), { modes: ['train'], stripPrefixes: cfg.stripPrefixes, aliases: cfg.aliases, stationWords: !!cfg.stationWords, mergeMeters: cfg.mergeMeters, tolerance: cfg.tolerance });
-  const icNames = new Set(icNet.stops.map((s) => s.name));
+  // OSM route data has a few known gaps/errors; config lists correct them by station name.
+  const icNames = new Set(icNet.stops.map((s) => s.name).concat(cfg.intercityIncludeStations || []));
+  for (const n of cfg.intercityExcludeStations || []) icNames.delete(n);
+  const missing = (cfg.intercityIncludeStations || []).filter((n) => !net.stops.some((s) => s.name === n));
+  if (missing.length) console.warn(`  intercityIncludeStations not found: ${missing.join(', ')}`);
   return { net, areas, intercityStops: net.stops.filter((s) => icNames.has(s.name)).map((s) => s.id) };
 }
 

@@ -103,6 +103,8 @@ export function showEnd({ summary, packName, missedStops, isBest, onReplay, onBa
   el.onclick = (e) => { if (e.target === el) el.classList.remove('peek'); };
 }
 
+export function unpeekEnd() { $('end').classList.remove('peek'); }
+
 export function hideEnd() { const el = $('end'); el.hidden = true; el.classList.remove('peek'); }
 
 // ── Panel: place menu (globe) ───────────────────────────

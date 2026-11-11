@@ -32,5 +32,16 @@
     "high_speed",
     "international"
   ],
-  "intercityExcludeName": "^(RE|RS)\\s?\\d"
+  "intercityExcludeName": "^(RE|RS)\\s?\\d",
+  "intercityOperators": "^(Nederlandse Spoorwegen|NS International|DB Fernverkehr|Eurostar)",
+  "intercityExcludeStations": [
+    "Wijhe",
+    "Olst"
+  ],
+  "intercityIncludeStations": [
+    "Harderwijk",
+    "Woerden",
+    "Dronten",
+    "Kampen Zuid"
+  ]
 }

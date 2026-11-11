@@ -120,6 +120,7 @@ async function startPack(place, packId, { hard = false, resume = false } = {}) {
   M.cancelFlight();
   ui.hidePanel(); ui.hideEnd();
   L.showPack(app.map, app.data, app.pack, { hard });
+  for (const id of app.run.wrongIds) L.setStopState(app.map, id, 'wrong'); // restore marks on a resumed station
   app.map.fitBounds(L.packBounds(app.data, app.pack), { padding: playPadding(), duration: M.reducedMotion() ? 0 : 900, maxZoom: 14.5 });
   ui.setStreak(app.run.streak);
   showCurrent();
@@ -135,6 +136,7 @@ function showCurrent() {
 }
 
 function onMapClick(e) {
+  if (app.state === 'end') { ui.unpeekEnd(); return; } // tapping the map brings the result card back
   if (app.state !== 'play' || !app.run || app.busy || app.run.answered) return;
   const radius = app.lastPointer === 'mouse' ? 14 : 22;
   const id = nearestStop(L.visibleStopPoints(app.map, app.data, app.pack), e.point, radius);
